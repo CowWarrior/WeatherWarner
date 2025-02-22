@@ -1,0 +1,31 @@
+{
+    "navbar": {
+      "title": "Weather Forecast",
+      "language": "Language"
+    },
+    "form": {
+      "header": "Enter Coordinates or Select a City",
+      "selectCity": "Select City",
+      "custom": "Custom",
+      "latitude": "Latitude",
+      "longitude": "Longitude",
+      "fetch": "Fetch Forecast"
+    },
+    "forecast": {
+      "shortTerm": "Short-Term Forecast",
+      "longTerm": "Long-Term Forecast",
+      "noData": "No data loaded.",
+      "loading": "Loading forecast..."
+    },
+    "alerts": {
+      "snowWarning": "More than {{threshold}}cm of snow forecasted.",
+      "hail": "Hail detected in forecast.",
+      "weatherAlert": "Weather alerts present.",
+      "noAlerts": "No significant weather conditions detected."
+    },
+    "footer": {
+      "detectedLanguage": "Detected Language:",
+      "generatedBy": "Code generated using ChatGPT (o3-mini-high)"
+    }
+  }
+  

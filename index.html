@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title data-i18n="navbar.title">Weather Forecast</title>
+  <!-- Bootstrap CSS (latest version) -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+  <!-- Flag Icon CSS -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/6.6.6/css/flag-icons.min.css" rel="stylesheet">
+  <style>
+    /* Ensure main content is not hidden behind the fixed navbar */
+    body {
+      padding-top: 70px;
+    }
+  </style>
+  <!-- i18next and plugins -->
+  <script src="https://unpkg.com/i18next@21.9.1/dist/umd/i18next.min.js"></script>
+  <script src="https://unpkg.com/i18next-xhr-backend@3.2.2/i18nextXHRBackend.min.js"></script>
+  <script src="https://unpkg.com/i18next-browser-languagedetector@6.1.2/i18nextBrowserLanguageDetector.min.js"></script>
+</head>
+<body>
+  <!-- Fixed Navbar with Hamburger Menu for Language Selection -->
+  <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
+    <div class="container-fluid">
+      <!-- Active language display: Flag icon and text -->
+      <a class="navbar-brand" href="#" id="activeLanguageDisplay">
+        <span id="activeLanguageIcon" class="flag-icon me-2"></span>
+        <span data-i18n="navbar.title">Weather Forecast</span>
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarLang" aria-controls="navbarLang" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarLang">
+        <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="languageMenu" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              <span data-i18n="navbar.language">Language</span>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="languageMenu">
+              <li>
+                <a class="dropdown-item language-option" data-locale="en-CA" href="#">
+                  <span class="flag-icon flag-icon-ca me-2"></span>English (Canada)
+                </a>
+              </li>
+              <li>
+                <a class="dropdown-item language-option" data-locale="en-US" href="#">
+                  <span class="flag-icon flag-icon-us me-2"></span>English (US)
+                </a>
+              </li>
+              <li>
+                <a class="dropdown-item language-option" data-locale="fr-CA" href="#">
+                  <span class="flag-icon flag-icon-ca me-2"></span>Français (Canada)
+                </a>
+              </li>
+              <li>
+                <a class="dropdown-item language-option" data-locale="fr-FR" href="#">
+                  <span class="flag-icon flag-icon-fr me-2"></span>Français (France)
+                </a>
+              </li>
+              <li>
+                <a class="dropdown-item language-option" data-locale="es-MX" href="#">
+                  <span class="flag-icon flag-icon-mx me-2"></span>Español (México)
+                </a>
+              </li>
+              <li>
+                <a class="dropdown-item language-option" data-locale="es-ES" href="#">
+                  <span class="flag-icon flag-icon-es me-2"></span>Español (España)
+                </a>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+  
+  <!-- Main Container -->
+  <div class="container">
+    <!-- Input Form -->
+    <div class="card mb-4">
+      <div class="card-header" data-i18n="form.header">Enter Coordinates or Select a City</div>
+      <div class="card-body">
+        <form id="weatherForm" class="row g-3">
+          <!-- Drop-down for Canadian cities (populated dynamically) -->
+          <div class="col-md-12">
+            <label for="citySelect" class="form-label" data-i18n="form.selectCity">Select City</label>
+            <select id="citySelect" class="form-select">
+              <option value="custom" data-i18n="form.custom">Custom</option>
+            </select>
+          </div>
+          <!-- Latitude Input -->
+          <div class="col-md-6">
+            <label for="latitude" class="form-label" data-i18n="form.latitude">Latitude</label>
+            <input type="number" step="any" class="form-control" id="latitude" placeholder="Latitude" required>
+          </div>
+          <!-- Longitude Input -->
+          <div class="col-md-6">
+            <label for="longitude" class="form-label" data-i18n="form.longitude">Longitude</label>
+            <input type="number" step="any" class="form-control" id="longitude" placeholder="Longitude" required>
+          </div>
+          <!-- Submit Button -->
+          <div class="col-12">
+            <button type="submit" class="btn btn-primary" data-i18n="form.fetch">Fetch Forecast</button>
+          </div>
+        </form>
+      </div>
+    </div>
+    
+    <!-- Forecast Results Cards -->
+    <div class="card mb-4" id="shortTermCard">
+      <div class="card-header" data-i18n="forecast.shortTerm">Short-Term Forecast</div>
+      <div class="card-body">
+        <div id="short-term-forecast" data-i18n="forecast.noData">No data loaded.</div>
+      </div>
+    </div>
+    <div class="card" id="longTermCard">
+      <div class="card-header" data-i18n="forecast.longTerm">Long-Term Forecast</div>
+      <div class="card-body">
+        <div id="long-term-forecast" data-i18n="forecast.noData">No data loaded.</div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Footer (Single line with flex) -->
+  <footer class="bg-light py-2 mt-4">
+    <div class="container d-flex justify-content-center align-items-center">
+      <span data-i18n="footer.detectedLanguage" class="me-2"></span>
+      <span id="detectedLanguage" class="me-4"></span>
+      <span data-i18n="footer.generatedBy"></span>
+    </div>
+  </footer>
+  
+  <!-- jQuery and Bootstrap Bundle JS (provided references) -->
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+  
+  <!-- Load our main JavaScript file -->
+  <script type="module" src="main.js"></script>
+  
+  <!--
+    IMPORTANT:
+    To avoid CORS issues when running this file locally, please serve the directory via a local web server.
+    For example, use the "Live Server" extension in Visual Studio Code.
+  -->
+</body>
+</html>

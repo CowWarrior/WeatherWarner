@@ -1,0 +1,31 @@
+{
+    "navbar": {
+      "title": "Pronóstico del Tiempo",
+      "language": "Idioma"
+    },
+    "form": {
+      "header": "Ingresa coordenadas o selecciona una ciudad",
+      "selectCity": "Selecciona una ciudad",
+      "custom": "Personalizado",
+      "latitude": "Latitud",
+      "longitude": "Longitud",
+      "fetch": "Obtener Pronóstico"
+    },
+    "forecast": {
+      "shortTerm": "Pronóstico a Corto Plazo",
+      "longTerm": "Pronóstico a Largo Plazo",
+      "noData": "No se han cargado datos.",
+      "loading": "Cargando pronóstico..."
+    },
+    "alerts": {
+      "snowWarning": "Se pronostican más de {{threshold}}cm de nieve.",
+      "hail": "Se detectó granizo en el pronóstico.",
+      "weatherAlert": "Alertas meteorológicas presentes.",
+      "noAlerts": "No se detectaron condiciones meteorológicas significativas."
+    },
+    "footer": {
+      "detectedLanguage": "Idioma detectado:",
+      "generatedBy": "Código generado con ChatGPT (o3-mini-high)"
+    }
+  }
+  

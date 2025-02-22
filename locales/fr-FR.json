@@ -1,0 +1,31 @@
+{
+    "navbar": {
+      "title": "Prévisions Météorologiques",
+      "language": "Langue"
+    },
+    "form": {
+      "header": "Entrez des coordonnées ou sélectionnez une ville",
+      "selectCity": "Choisissez une ville",
+      "custom": "Personnalisé",
+      "latitude": "Latitude",
+      "longitude": "Longitude",
+      "fetch": "Obtenir la prévision"
+    },
+    "forecast": {
+      "shortTerm": "Prévision à court terme",
+      "longTerm": "Prévision à long terme",
+      "noData": "Aucune donnée disponible.",
+      "loading": "Chargement de la prévision..."
+    },
+    "alerts": {
+      "snowWarning": "Plus de {{threshold}}cm de neige prévus.",
+      "hail": "Grêle détectée dans la prévision.",
+      "weatherAlert": "Alertes météorologiques en cours.",
+      "noAlerts": "Aucune condition météorologique significative détectée."
+    },
+    "footer": {
+      "detectedLanguage": "Langue détectée :",
+      "generatedBy": "Code généré avec ChatGPT (o3-mini-high)"
+    }
+  }
+  

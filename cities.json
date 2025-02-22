@@ -1,0 +1,117 @@
+[
+    {
+      "name_en": "Calgary, AB",
+      "name_fr": "Calgary, AB",
+      "lat": 51.0447,
+      "long": -114.0719
+    },
+    {
+      "name_en": "Charlottetown, PEI",
+      "name_fr": "Charlottetown, IPE",
+      "lat": 46.2382,
+      "long": -63.1311
+    },
+    {
+      "name_en": "Edmonton, AB",
+      "name_fr": "Edmonton, AB",
+      "lat": 53.5461,
+      "long": -113.4938
+    },
+    {
+      "name_en": "Fredericton, NB",
+      "name_fr": "Fredericton, NB",
+      "lat": 45.9636,
+      "long": -66.6431
+    },
+    {
+      "name_en": "Halifax, NS",
+      "name_fr": "Halifax, NS",
+      "lat": 44.6488,
+      "long": -63.5752
+    },
+    {
+      "name_en": "Iqaluit, NU",
+      "name_fr": "Iqaluit, NU",
+      "lat": 63.7467,
+      "long": -68.5163
+    },
+    {
+      "name_en": "Montreal, QC",
+      "name_fr": "Montréal, QC",
+      "lat": 45.5017,
+      "long": -73.5673
+    },
+    {
+      "name_en": "Ottawa, ON",
+      "name_fr": "Ottawa, ON",
+      "lat": 45.4215,
+      "long": -75.6972
+    },
+    {
+      "name_en": "Quebec City, QC",
+      "name_fr": "Québec, QC",
+      "lat": 46.8139,
+      "long": -71.2080
+    },
+    {
+      "name_en": "Regina, SK",
+      "name_fr": "Regina, SK",
+      "lat": 50.4452,
+      "long": -104.6189
+    },
+    {
+      "name_en": "Saskatoon, SK",
+      "name_fr": "Saskatoon, SK",
+      "lat": 52.1332,
+      "long": -106.67
+    },
+    {
+      "name_en": "Sault St-Marie, ON",
+      "name_fr": "Sault St-Marie, ON",
+      "lat": 46.522,
+      "long": -84.345
+    },
+    {
+      "name_en": "St. John's, NL",
+      "name_fr": "St. John's, NL",
+      "lat": 47.5615,
+      "long": -52.7126
+    },
+    {
+      "name_en": "Toronto, ON",
+      "name_fr": "Toronto, ON",
+      "lat": 43.6532,
+      "long": -79.3832
+    },
+    {
+      "name_en": "Vancouver, BC",
+      "name_fr": "Vancouver, BC",
+      "lat": 49.2827,
+      "long": -123.1207
+    },
+    {
+      "name_en": "Victoria, BC",
+      "name_fr": "Victoria, BC",
+      "lat": 48.4284,
+      "long": -123.3656
+    },
+    {
+      "name_en": "Whitehorse, YT",
+      "name_fr": "Whitehorse, YT",
+      "lat": 60.7212,
+      "long": -135.0568
+    },
+    {
+      "name_en": "Winnipeg, MB",
+      "name_fr": "Winnipeg, MB",
+      "lat": 49.8951,
+      "long": -97.1384
+    },
+    {
+      "name_en": "Yellowknife, NT",
+      "name_fr": "Yellowknife, NT",
+      "lat": 62.4540,
+      "long": -114.3718
+    }
+  ]
+  
