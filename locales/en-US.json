@@ -9,7 +9,9 @@
       "custom": "Custom",
       "latitude": "Latitude",
       "longitude": "Longitude",
-      "fetch": "Fetch Forecast"
+      "fetch": "Fetch Forecast",
+      "useCurrentLocation": "Use Current Location",
+      "fetchLocation": "Fetching location..."
     },
     "forecast": {
       "shortTerm": "Short-Term Forecast",
@@ -26,6 +28,14 @@
     "footer": {
       "detectedLanguage": "Detected Language:",
       "generatedBy": "Code generated using ChatGPT (o3-mini-high)"
+    },
+    "error": {
+      "permissionDenied": "User denied the request for Geolocation.",
+      "positionUnavailable": "Location information is unavailable.",
+      "timeout": "The request to get user location timed out.",
+      "unknown": "An unknown error occurred.",
+      "geolocationNotSupported": "Geolocation is not supported by your browser.",
+      "location": "Error obtaining location"
     }
   }
   

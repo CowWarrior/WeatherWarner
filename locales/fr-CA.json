@@ -9,7 +9,9 @@
       "custom": "Personnalisé",
       "latitude": "Latitude",
       "longitude": "Longitude",
-      "fetch": "Obtenir les prévisions"
+      "fetch": "Obtenir les prévisions",
+      "useCurrentLocation": "Utiliser la position actuelle",
+      "fetchLocation": "Récupération de la position..."
     },
     "forecast": {
       "shortTerm": "Prévisions à court terme",
@@ -26,6 +28,14 @@
     "footer": {
       "detectedLanguage": "Langue détectée :",
       "generatedBy": "Code généré avec ChatGPT (o3-mini-high)"
+    },
+    "error": {
+      "permissionDenied": "L'utilisateur a refusé la demande de géolocalisation.",
+      "positionUnavailable": "Les informations de localisation sont indisponibles.",
+      "timeout": "La demande de géolocalisation a expiré.",
+      "unknown": "Une erreur inconnue est survenue.",
+      "geolocationNotSupported": "La géolocalisation n'est pas supportée par votre navigateur.",
+      "location": "Erreur lors de l'obtention de la position"
     }
   }
   

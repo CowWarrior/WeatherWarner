@@ -9,7 +9,9 @@
       "custom": "Personalizado",
       "latitude": "Latitud",
       "longitude": "Longitud",
-      "fetch": "Obtener Pronóstico"
+      "fetch": "Obtener Pronóstico",
+      "useCurrentLocation": "Usar mi ubicación actual",
+      "fetchLocation": "Obteniendo ubicación..."
     },
     "forecast": {
       "shortTerm": "Pronóstico a Corto Plazo",
@@ -26,6 +28,14 @@
     "footer": {
       "detectedLanguage": "Idioma detectado:",
       "generatedBy": "Código generado con ChatGPT (o3-mini-high)"
+    },
+    "error": {
+      "permissionDenied": "El usuario denegó la solicitud de geolocalización.",
+      "positionUnavailable": "La información de ubicación no está disponible.",
+      "timeout": "La solicitud para obtener la ubicación ha expirado.",
+      "unknown": "Ocurrió un error desconocido.",
+      "geolocationNotSupported": "La geolocalización no es compatible con su navegador.",
+      "location": "Error al obtener la ubicación"
     }
   }
   

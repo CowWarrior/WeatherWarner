@@ -99,9 +99,10 @@
             <label for="longitude" class="form-label" data-i18n="form.longitude">Longitude</label>
             <input type="number" step="any" class="form-control" id="longitude" placeholder="Longitude" required>
           </div>
-          <!-- Submit Button -->
-          <div class="col-12">
+          <!-- Buttons Row -->
+          <div class="col-12 d-flex gap-2">
             <button type="submit" class="btn btn-primary" data-i18n="form.fetch">Fetch Forecast</button>
+            <button type="button" id="useCurrentLocationBtn" class="btn btn-secondary" data-i18n="form.useCurrentLocation">Use Current Location</button>
           </div>
         </form>
       </div>
@@ -122,7 +123,7 @@
     </div>
   </div>
   
-  <!-- Footer: Single-line display with detected language and generation info -->
+  <!-- Footer: Single-line display -->
   <footer class="bg-light py-2 mt-4">
     <div class="container d-flex justify-content-center align-items-center">
       <span data-i18n="footer.detectedLanguage" class="me-2"></span>
