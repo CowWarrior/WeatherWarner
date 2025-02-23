@@ -30,12 +30,13 @@ function updateFooter() {
   $("#detectedLanguage").text(navigator.language);
 }
 
-// Helper: mapping from locale to flag icon class (Flag Icons v7.2.3).
+// Helper: mapping from locale to flag icon class using Flag Icons v7.2.3 and Flag Icons CA library.
 function getFlagIcon(locale) {
   switch (locale) {
     case "en-CA":
-    case "fr-CA":
       return "fi-ca";
+    case "fr-CA":
+      return "fi-ca-qc"; // For French Canada, use the flag for Québec (provided by Flag Icons CA)
     case "en-US":
       return "fi-us";
     case "fr-FR":
@@ -62,7 +63,7 @@ function getFullLanguageName(locale) {
   return mapping[locale] || locale;
 }
 
-// Helper: update the active language display next to the dropdown.
+// Helper: update the active language display (flag and full language name) next to the dropdown.
 function updateActiveLanguageDisplay() {
   const flagClass = getFlagIcon(currentLocale);
   $("#activeLanguageIcon").attr("class", "fi " + flagClass + " me-2");
@@ -82,11 +83,10 @@ function buildCityDropdown(cities) {
   // Sort cities alphabetically by their English name.
   cities.sort((a, b) => a.name_en.localeCompare(b.name_en));
   
-  // Build options: use English names for English locales; French names for French.
+  // Build options: use English names for English locales; French names for French locales.
   $.each(cities, function(index, city) {
     let optionText = currentLocale.startsWith("en") ? city.name_en : city.name_fr;
     const value = city.lat + "," + city.long;
-    // Mark Montreal as default if present.
     const selected = (city.name_en.toLowerCase().includes("montreal")) ? "selected" : "";
     $citySelect.append(`<option value="${value}" ${selected}>${optionText}</option>`);
   });
@@ -136,47 +136,45 @@ $(document).ready(function() {
   });
   
   // Handle "Use Current Location" button click.
-$("#useCurrentLocationBtn").click(function() {
-  if (navigator.geolocation) {
-    // Disable the button and show a localized loading message.
-    $(this).prop("disabled", true).text(i18next.t("form.fetchLocation"));
-    
-    navigator.geolocation.getCurrentPosition(function(position) {
-      const lat = position.coords.latitude;
-      const long = position.coords.longitude;
-      $("#latitude").val(lat);
-      $("#longitude").val(long);
-      // Set the cities drop-down to "custom"
-      $("#citySelect").val("custom");
+  $("#useCurrentLocationBtn").click(function() {
+    if (navigator.geolocation) {
+      // Disable the button and show a localized loading message.
+      $(this).prop("disabled", true).text(i18next.t("form.fetchLocation"));
       
-      // Re-enable the button and reset its text (localized)
-      $("#useCurrentLocationBtn").prop("disabled", false).text(i18next.t("form.useCurrentLocation"));
-    }, function(error) {
-      let errorMessage;
-      switch(error.code) {
-        case error.PERMISSION_DENIED:
-          errorMessage = i18next.t("error.permissionDenied");
-          break;
-        case error.POSITION_UNAVAILABLE:
-          errorMessage = i18next.t("error.positionUnavailable");
-          break;
-        case error.TIMEOUT:
-          errorMessage = i18next.t("error.timeout");
-          break;
-        case error.UNKNOWN_ERROR:
-        default:
-          errorMessage = i18next.t("error.unknown");
-          break;
-      }
-      alert(i18next.t("error.location") + ": " + errorMessage);
-      
-      // Re-enable the button and reset its text (localized)
-      $("#useCurrentLocationBtn").prop("disabled", false).text(i18next.t("form.useCurrentLocation"));
-    });
-  } else {
-    alert(i18next.t("error.geolocationNotSupported"));
-  }
-});
+      navigator.geolocation.getCurrentPosition(function(position) {
+        const lat = position.coords.latitude;
+        const long = position.coords.longitude;
+        $("#latitude").val(lat);
+        $("#longitude").val(long);
+        // Set the city dropdown to "custom".
+        $("#citySelect").val("custom");
+        
+        // Re-enable the button and reset its text (localized).
+        $("#useCurrentLocationBtn").prop("disabled", false).text(i18next.t("form.useCurrentLocation"));
+      }, function(error) {
+        let errorMessage;
+        switch(error.code) {
+          case error.PERMISSION_DENIED:
+            errorMessage = i18next.t("error.permissionDenied");
+            break;
+          case error.POSITION_UNAVAILABLE:
+            errorMessage = i18next.t("error.positionUnavailable");
+            break;
+          case error.TIMEOUT:
+            errorMessage = i18next.t("error.timeout");
+            break;
+          case error.UNKNOWN_ERROR:
+          default:
+            errorMessage = i18next.t("error.unknown");
+            break;
+        }
+        alert(i18next.t("error.location") + ": " + errorMessage);
+        $("#useCurrentLocationBtn").prop("disabled", false).text(i18next.t("form.useCurrentLocation"));
+      });
+    } else {
+      alert(i18next.t("error.geolocationNotSupported"));
+    }
+  });
   
   // Handle form submission.
   $("#weatherForm").submit(function(e) {
@@ -184,7 +182,7 @@ $("#useCurrentLocationBtn").click(function() {
     const lat = parseFloat($("#latitude").val());
     const long = parseFloat($("#longitude").val());
     const weatherChecker = new WeatherChecker(lat, long);
-    weatherChecker.snowThreshold = 2; // Adjust threshold if needed.
+    weatherChecker.snowThreshold = 2;
     
     // Clear previous results and styling.
     $("#short-term-forecast").html(i18next.t("forecast.loading") || "Loading short-term forecast...");
