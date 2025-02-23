@@ -13,67 +13,76 @@ i18next
   }, function(err, t) {
     updateContent();
     updateFooter();
+    updateActiveLanguageDisplay();
   });
 
-// Helper: Returns the flag icon class for a given locale.
-function getFlagIcon(locale) {
-    // Map locale to flag icon class
-    switch (locale) {
-      case "en-CA":
-      case "fr-CA":
-        return "flag-icon-ca";
-      case "en-US":
-        return "flag-icon-us";
-      case "fr-FR":
-        return "flag-icon-fr";
-      case "es-MX":
-        return "flag-icon-mx";
-      case "es-ES":
-        return "flag-icon-es";
-      default:
-        return "";
-    }
-}
-
-// Helper: update all elements with [data-i18n] attribute.
+// Helper: update all elements with data-i18n attribute.
 function updateContent() {
   $('[data-i18n]').each(function(){
     const key = $(this).data('i18n');
     $(this).text(i18next.t(key));
   });
   updateFooter();
-  updateActiveLanguageDisplay();
+}
+
+// Helper: update the footer with the browser's language.
+function updateFooter() {
+  $("#detectedLanguage").text(navigator.language);
+}
+
+// Helper: mapping from locale to flag icon class using Flag Icons v7.2.3.
+function getFlagIcon(locale) {
+  switch (locale) {
+    case "en-CA":
+    case "fr-CA":
+      return "fi-ca";
+    case "en-US":
+      return "fi-us";
+    case "fr-FR":
+      return "fi-fr";
+    case "es-MX":
+      return "fi-mx";
+    case "es-ES":
+      return "fi-es";
+    default:
+      return "";
+  }
+}
+
+// Helper: mapping from locale to full language name.
+function getFullLanguageName(locale) {
+  const mapping = {
+    "en-CA": "English (Canada)",
+    "en-US": "English (US)",
+    "fr-CA": "Français (Canada)",
+    "fr-FR": "Français (France)",
+    "es-MX": "Español (México)",
+    "es-ES": "Español (España)"
+  };
+  return mapping[locale] || locale;
 }
 
 // Helper: update the active language display in the navbar.
 function updateActiveLanguageDisplay() {
-    const flagClass = getFlagIcon(currentLocale);
-    // Set the flag icon and display the locale code.
-    $("#activeLanguageIcon").attr("class", "flag-icon " + flagClass + " me-2");
-    // Optionally, update text if desired.
-    $("#activeLanguageDisplay").find("span[data-i18n]").first().text(i18next.t("navbar.title"));
-  }
-
-// Helper: update the footer with the current detected language.
-function updateFooter() {
-    // Use the browser's language value from navigator.language
-    $("#detectedLanguage").text(navigator.language);
-}  
+  const flagClass = getFlagIcon(currentLocale);
+  $("#activeLanguageIcon").attr("class", "fi " + flagClass + " me-2");
+  $("#activeLanguageText").text(getFullLanguageName(currentLocale));
+}
 
 // Global variable to hold the current locale.
 let currentLocale = i18next.language || 'en-CA';
 
-// Function to rebuild the city dropdown based on the current locale.
+// Function to build the city dropdown based on the current locale.
 function buildCityDropdown(cities) {
   const $citySelect = $('#citySelect');
-  $citySelect.empty(); // Clear existing options.
-  // Add the "Custom" option first.
+  $citySelect.empty();
+  // Add the "Custom" option.
   $citySelect.append(`<option value="custom" data-i18n="form.custom">${i18next.t("form.custom")}</option>`);
   
   // Sort cities alphabetically by their English name.
   cities.sort((a, b) => a.name_en.localeCompare(b.name_en));
   
-  // For each city, choose displayed name based on current locale.
+  // Build options: use English names for English locales; French names for French locales.
   $.each(cities, function(index, city) {
     let optionText = currentLocale.startsWith("en") ? city.name_en : city.name_fr;
     const value = city.lat + "," + city.long;
@@ -84,7 +93,7 @@ function buildCityDropdown(cities) {
   
   // Update coordinate fields if the selected option is not "custom".
   const selectedVal = $citySelect.find('option:selected').val();
-  if(selectedVal !== "custom") {
+  if (selectedVal !== "custom") {
     const coords = selectedVal.split(",");
     $("#latitude").val(coords[0]);
     $("#longitude").val(coords[1]);
@@ -101,10 +110,10 @@ $(document).ready(function() {
     buildCityDropdown(cityData);
   });
   
-  // Update coordinate fields when the drop-down selection changes.
+  // Update coordinate fields when the city dropdown selection changes.
   $("#citySelect").change(function() {
     const value = $(this).val();
-    if(value === "custom"){
+    if (value === "custom") {
       $("#latitude").val("");
       $("#longitude").val("");
     } else {
@@ -120,9 +129,11 @@ $(document).ready(function() {
     const newLocale = $(this).data("locale");
     i18next.changeLanguage(newLocale, function(err, t) {
       currentLocale = newLocale;
-      updateContent(); // update UI strings
-      buildCityDropdown(cityData); // rebuild drop-down with appropriate names
-      $("#languageMenu").text(i18next.t("navbar.language") + " (" + newLocale + ")");
+      updateContent();
+      buildCityDropdown(cityData);
+      // Update language menu text (if desired) and active language display.
+      // Here we update a separate element (#activeLanguageDisplay) with flag and full language text.
+      updateActiveLanguageDisplay();
     });
   });
   
@@ -132,7 +143,7 @@ $(document).ready(function() {
     const lat = parseFloat($("#latitude").val());
     const long = parseFloat($("#longitude").val());
     const weatherChecker = new WeatherChecker(lat, long);
-    weatherChecker.snowThreshold = 2; // Modify threshold if needed.
+    weatherChecker.snowThreshold = 2; // Adjust threshold if needed.
     
     // Clear previous results and styling.
     $("#short-term-forecast").html(i18next.t("forecast.loading") || "Loading short-term forecast...");
@@ -157,7 +168,6 @@ $(document).ready(function() {
           message = i18next.t("alerts.noAlerts") + "<br>";
         }
         $("#short-term-forecast").html(message);
-        // Update card style.
         if (conditions.weatherAlert || conditions.totalSnow > 10) {
           $("#shortTermCard").addClass("bg-danger text-white");
         } else if (conditions.totalSnow > weatherChecker.snowThreshold) {
@@ -185,7 +195,6 @@ $(document).ready(function() {
           message = i18next.t("alerts.noAlerts") + "<br>";
         }
         $("#long-term-forecast").html(message);
-        // Update card style.
         if (conditions.weatherAlert || conditions.totalSnow > 10) {
           $("#longTermCard").addClass("bg-danger text-white");
         } else if (conditions.totalSnow > weatherChecker.snowThreshold) {
