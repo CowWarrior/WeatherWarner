@@ -13,6 +13,15 @@
       "useCurrentLocation": "Utiliser la position actuelle",
       "fetchLocation": "Récupération de la position..."
     },
+    "accordion": {
+      "period": "Période",
+      "precipitationPercentage": "Précipitations (%)",
+      "precipitationType": "Type de précipitations",
+      "precipitationQuantity": "Quantité de précipitations",
+      "temperature": "Température",
+      "feelsLike": "Ressenti",
+      "noDetails": "Aucune prévision détaillée disponible."
+    },
     "forecast": {
       "shortTerm": "Prévision à court terme",
       "longTerm": "Prévision à long terme",
@@ -20,6 +29,7 @@
       "loading": "Chargement de la prévision..."
     },
     "alerts": {
+      "totalSnow": "Neige totale : {{total}} cm",
       "snowWarning": "Plus de {{threshold}}cm de neige prévus.",
       "hail": "Grêle détectée dans la prévision.",
       "weatherAlert": "Alertes météorologiques en cours.",

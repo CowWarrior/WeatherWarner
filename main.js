@@ -30,13 +30,13 @@ function updateFooter() {
   $("#detectedLanguage").text(navigator.language);
 }
 
-// Helper: mapping from locale to flag icon class using Flag Icons v7.2.3 and Flag Icons CA library.
+// Helper: mapping from locale to flag icon class using Flag Icons v7.2.3 and Flag Icons CA.
 function getFlagIcon(locale) {
   switch (locale) {
     case "en-CA":
       return "fi-ca";
     case "fr-CA":
-      return "fi-ca-qc"; // For French Canada, use the flag for Québec (provided by Flag Icons CA)
+      return "fi-ca-qc"; // French Canada uses the specialized flag from Flag Icons CA.
     case "en-US":
       return "fi-us";
     case "fr-FR":
@@ -63,7 +63,7 @@ function getFullLanguageName(locale) {
   return mapping[locale] || locale;
 }
 
-// Helper: update the active language display (flag and full language name) next to the dropdown.
+// Helper: update the active language display (flag and full language name).
 function updateActiveLanguageDisplay() {
   const flagClass = getFlagIcon(currentLocale);
   $("#activeLanguageIcon").attr("class", "fi " + flagClass + " me-2");
@@ -83,7 +83,7 @@ function buildCityDropdown(cities) {
   // Sort cities alphabetically by their English name.
   cities.sort((a, b) => a.name_en.localeCompare(b.name_en));
   
-  // Build options: use English names for English locales; French names for French locales.
+  // Build options: use English names for English locales; French names for French.
   $.each(cities, function(index, city) {
     let optionText = currentLocale.startsWith("en") ? city.name_en : city.name_fr;
     const value = city.lat + "," + city.long;
@@ -138,7 +138,6 @@ $(document).ready(function() {
   // Handle "Use Current Location" button click.
   $("#useCurrentLocationBtn").click(function() {
     if (navigator.geolocation) {
-      // Disable the button and show a localized loading message.
       $(this).prop("disabled", true).text(i18next.t("form.fetchLocation"));
       
       navigator.geolocation.getCurrentPosition(function(position) {
@@ -146,10 +145,7 @@ $(document).ready(function() {
         const long = position.coords.longitude;
         $("#latitude").val(lat);
         $("#longitude").val(long);
-        // Set the city dropdown to "custom".
         $("#citySelect").val("custom");
-        
-        // Re-enable the button and reset its text (localized).
         $("#useCurrentLocationBtn").prop("disabled", false).text(i18next.t("form.useCurrentLocation"));
       }, function(error) {
         let errorMessage;
@@ -184,7 +180,6 @@ $(document).ready(function() {
     const weatherChecker = new WeatherChecker(lat, long);
     weatherChecker.snowThreshold = 2;
     
-    // Clear previous results and styling.
     $("#short-term-forecast").html(i18next.t("forecast.loading") || "Loading short-term forecast...");
     $("#long-term-forecast").html(i18next.t("forecast.loading") || "Loading long-term forecast...");
     $("#shortTermCard").removeClass("bg-warning bg-danger text-white");
@@ -194,6 +189,7 @@ $(document).ready(function() {
     weatherChecker.fetchShortTermForecast(6)
       .then(function(conditions) {
         let message = "";
+        message += i18next.t("alerts.totalSnow", { total: conditions.totalSnow }) + "<br>";
         if (conditions.significantSnow) {
           message += i18next.t("alerts.snowWarning", { threshold: weatherChecker.snowThreshold }) + "<br>";
         }
@@ -239,9 +235,46 @@ $(document).ready(function() {
         } else if (conditions.totalSnow > weatherChecker.snowThreshold) {
           $("#longTermCard").addClass("bg-warning");
         }
+        // Build the accordion to show details for each forecast period.
+        buildLongTermAccordion(conditions);
       })
       .catch(function() {
         $("#long-term-forecast").html("Error fetching long-term forecast.");
       });
   });
 });
+
+// Helper: build an accordion with details for each long-term forecast period.
+function buildLongTermAccordion(conditions) {
+  // Assume the detailed forecast periods are in conditions.periods (an array)
+  const periods = conditions.periods || [];
+  let accordionHTML = '<div class="accordion" id="forecastAccordion">';
+  if (periods.length > 0) {
+    periods.forEach((period, index) => {
+      const collapseId = "collapsePeriod" + index;
+      const headingId = "headingPeriod" + index;
+      accordionHTML += `
+        <div class="accordion-item">
+          <h2 class="accordion-header" id="${headingId}">
+            <button class="accordion-button ${index === 0 ? "" : "collapsed"}" type="button" data-bs-toggle="collapse" data-bs-target="#${collapseId}" aria-expanded="${index === 0 ? "true" : "false"}" aria-controls="${collapseId}">
+              ${i18next.t("accordion.period")} ${index + 1}
+            </button>
+          </h2>
+          <div id="${collapseId}" class="accordion-collapse collapse ${index === 0 ? "show" : ""}" aria-labelledby="${headingId}" data-bs-parent="#forecastAccordion">
+            <div class="accordion-body">
+              <p>${i18next.t("accordion.precipitationPercentage")}: ${period.precipitationPercentage}%</p>
+              <p>${i18next.t("accordion.precipitationType")}: ${period.precipitationType}</p>
+              <p>${i18next.t("accordion.precipitationQuantity")}: ${period.precipitationQuantity} mm</p>
+              <p>${i18next.t("accordion.temperature")}: ${period.temperature}°C</p>
+              <p>${i18next.t("accordion.feelsLike")}: ${period.feelsLike}°C</p>
+            </div>
+          </div>
+        </div>
+      `;
+    });
+  } else {
+    accordionHTML += `<div class="accordion-item"><div class="accordion-body">${i18next.t("accordion.noDetails")}</div></div>`;
+  }
+  accordionHTML += '</div>';
+  $("#longTermAccordionContainer").html(accordionHTML);
+}

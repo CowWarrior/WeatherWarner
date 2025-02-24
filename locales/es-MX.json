@@ -13,6 +13,15 @@
       "useCurrentLocation": "Usar mi ubicación actual",
       "fetchLocation": "Obteniendo ubicación..."
     },
+    "accordion": {
+      "period": "Período",
+      "precipitationPercentage": "Precipitación (%)",
+      "precipitationType": "Tipo de precipitación",
+      "precipitationQuantity": "Cantidad de precipitación",
+      "temperature": "Temperatura",
+      "feelsLike": "Sensación térmica",
+      "noDetails": "No hay detalles de pronóstico disponibles."
+    },
     "forecast": {
       "shortTerm": "Pronóstico a Corto Plazo",
       "longTerm": "Pronóstico a Largo Plazo",
@@ -20,6 +29,7 @@
       "loading": "Cargando pronóstico..."
     },
     "alerts": {
+      "totalSnow": "Nieve total: {{total}} cm",
       "snowWarning": "Se pronostican más de {{threshold}}cm de nieve.",
       "hail": "Se detectó granizo en el pronóstico.",
       "weatherAlert": "Alertas meteorológicas presentes.",

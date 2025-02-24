@@ -13,6 +13,15 @@
       "useCurrentLocation": "Use Current Location",
       "fetchLocation": "Fetching location..."
     },
+    "accordion": {
+      "period": "Period",
+      "precipitationPercentage": "Precipitation (%)",
+      "precipitationType": "Precipitation type",
+      "precipitationQuantity": "Precipitation quantity",
+      "temperature": "Temperature",
+      "feelsLike": "Feels like",
+      "noDetails": "No detailed forecast available."
+    },
     "forecast": {
       "shortTerm": "Short-Term Forecast",
       "longTerm": "Long-Term Forecast",
@@ -20,6 +29,7 @@
       "loading": "Loading forecast..."
     },
     "alerts": {
+      "totalSnow": "Total snow: {{total}} cm",
       "snowWarning": "More than {{threshold}}cm of snow forecasted.",
       "hail": "Hail detected in forecast.",
       "weatherAlert": "Weather alerts present.",
