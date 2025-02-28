@@ -1,51 +1,50 @@
 {
-    "navbar": {
-      "title": "Prévisions Météorologiques",
-      "language": "Langue"
-    },
-    "form": {
-      "header": "Entrez des coordonnées ou sélectionnez une ville",
-      "selectCity": "Choisissez une ville",
-      "custom": "Personnalisé",
-      "latitude": "Latitude",
-      "longitude": "Longitude",
-      "fetch": "Obtenir la prévision",
-      "useCurrentLocation": "Utiliser la position actuelle",
-      "fetchLocation": "Récupération de la position..."
-    },
-    "accordion": {
-      "period": "Période",
-      "precipitationPercentage": "Précipitations (%)",
-      "precipitationType": "Type de précipitations",
-      "precipitationQuantity": "Quantité de précipitations",
-      "temperature": "Température",
-      "feelsLike": "Ressenti",
-      "noDetails": "Aucune prévision détaillée disponible."
-    },
-    "forecast": {
-      "shortTerm": "Prévision à court terme",
-      "longTerm": "Prévision à long terme",
-      "noData": "Aucune donnée disponible.",
-      "loading": "Chargement de la prévision..."
-    },
-    "alerts": {
-      "totalSnow": "Neige totale : {{total}} cm",
-      "snowWarning": "Plus de {{threshold}}cm de neige prévus.",
-      "hail": "Grêle détectée dans la prévision.",
-      "weatherAlert": "Alertes météorologiques en cours.",
-      "noAlerts": "Aucune condition météorologique significative détectée."
-    },
-    "footer": {
-      "detectedLanguage": "Langue détectée :",
-      "generatedBy": "Code généré avec ChatGPT (o3-mini-high)"
-    },
-    "error": {
-      "permissionDenied": "L'utilisateur a refusé la demande de géolocalisation.",
-      "positionUnavailable": "Les informations de localisation sont indisponibles.",
-      "timeout": "La demande de géolocalisation a expiré.",
-      "unknown": "Une erreur inconnue est survenue.",
-      "geolocationNotSupported": "La géolocalisation n'est pas supportée par votre navigateur.",
-      "location": "Erreur lors de l'obtention de la position"
-    }
+  "navbar": {
+    "title": "Prévisions météorologiques",
+    "language": "Langue"
+  },
+  "form": {
+    "header": "Entrez des coordonnées ou sélectionnez une ville",
+    "selectCity": "Choisissez une ville",
+    "custom": "Personnalisé",
+    "latitude": "Latitude",
+    "longitude": "Longitude",
+    "fetch": "Obtenir la prévision",
+    "useCurrentLocation": "Utiliser ma position actuelle",
+    "fetchLocation": "Récupération de la position..."
+  },
+  "forecast": {
+    "shortTerm": "Prévision à court terme",
+    "longTerm": "Prévision à long terme",
+    "noData": "Aucune donnée disponible.",
+    "loading": "Chargement de la prévision..."
+  },
+  "alerts": {
+    "totalSnow": "Neige totale : {{total}} cm",
+    "snowWarning": "Plus de {{threshold}} cm de neige prévues.",
+    "hail": "Grêle détectée dans la prévision.",
+    "weatherAlert": "Alertes météorologiques en cours.",
+    "noAlerts": "Aucune condition météorologique significative détectée."
+  },
+  "accordion": {
+    "period": "Période",
+    "precipitationPercentage": "Pourcentage de précipitations (%)",
+    "precipitationType": "Type de précipitations",
+    "precipitationQuantity": "Quantité de précipitations",
+    "temperature": "Température",
+    "feelsLike": "Ressenti",
+    "noDetails": "Aucune prévision détaillée disponible."
+  },
+  "footer": {
+    "detectedLanguage": "Langue détectée :",
+    "generatedBy": "Code généré avec ChatGPT (o3-mini-high) et GitHub Copilot (GPT-4o)"
+  },
+  "error": {
+    "permissionDenied": "L'utilisateur a refusé la demande de géolocalisation.",
+    "positionUnavailable": "Les informations de localisation ne sont pas disponibles.",
+    "timeout": "La demande de géolocalisation a expiré.",
+    "unknown": "Une erreur inconnue est survenue.",
+    "geolocationNotSupported": "La géolocalisation n'est pas supportée par votre navigateur.",
+    "location": "Erreur lors de l'obtention de la position"
   }
-  
+}

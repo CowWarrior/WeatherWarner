@@ -1,51 +1,50 @@
 {
-    "navbar": {
-      "title": "Weather Forecast",
-      "language": "Language"
-    },
-    "form": {
-      "header": "Enter Coordinates or Select a City",
-      "selectCity": "Select City",
-      "custom": "Custom",
-      "latitude": "Latitude",
-      "longitude": "Longitude",
-      "fetch": "Fetch Forecast",
-      "useCurrentLocation": "Use Current Location",
-      "fetchLocation": "Fetching location..."
-    },
-    "accordion": {
-      "period": "Period",
-      "precipitationPercentage": "Precipitation (%)",
-      "precipitationType": "Precipitation type",
-      "precipitationQuantity": "Precipitation quantity",
-      "temperature": "Temperature",
-      "feelsLike": "Feels like",
-      "noDetails": "No detailed forecast available."
-    },
-    "forecast": {
-      "shortTerm": "Short-Term Forecast",
-      "longTerm": "Long-Term Forecast",
-      "noData": "No data loaded.",
-      "loading": "Loading forecast..."
-    },
-    "alerts": {
-      "totalSnow": "Total snow: {{total}} cm",
-      "snowWarning": "More than {{threshold}}cm of snow forecasted.",
-      "hail": "Hail detected in forecast.",
-      "weatherAlert": "Weather alerts present.",
-      "noAlerts": "No significant weather conditions detected."
-    },
-    "footer": {
-      "detectedLanguage": "Detected Language:",
-      "generatedBy": "Code generated using ChatGPT (o3-mini-high)"
-    },
-    "error": {
-      "permissionDenied": "User denied the request for Geolocation.",
-      "positionUnavailable": "Location information is unavailable.",
-      "timeout": "The request to get user location timed out.",
-      "unknown": "An unknown error occurred.",
-      "geolocationNotSupported": "Geolocation is not supported by your browser.",
-      "location": "Error obtaining location"
-    }
+  "navbar": {
+    "title": "Weather Forecast",
+    "language": "Language"
+  },
+  "form": {
+    "header": "Enter Coordinates or Select a City",
+    "selectCity": "Select City",
+    "custom": "Custom",
+    "latitude": "Latitude",
+    "longitude": "Longitude",
+    "fetch": "Fetch Forecast",
+    "useCurrentLocation": "Use Current Location",
+    "fetchLocation": "Fetching location..."
+  },
+  "forecast": {
+    "shortTerm": "Short-Term Forecast",
+    "longTerm": "Long-Term Forecast",
+    "noData": "No data loaded.",
+    "loading": "Loading forecast..."
+  },
+  "alerts": {
+    "totalSnow": "Total snow: {{total}} cm",
+    "snowWarning": "More than {{threshold}} cm of snow forecasted.",
+    "hail": "Hail detected in forecast.",
+    "weatherAlert": "Weather alerts present.",
+    "noAlerts": "No significant weather conditions detected."
+  },
+  "accordion": {
+    "period": "Period",
+    "precipitationPercentage": "Precipitation (%)",
+    "precipitationType": "Precipitation type",
+    "precipitationQuantity": "Precipitation quantity",
+    "temperature": "Temperature",
+    "feelsLike": "Feels like",
+    "noDetails": "No detailed forecast available."
+  },
+  "footer": {
+    "detectedLanguage": "Detected Language:",
+    "generatedBy": "Code generated using ChatGPT (o3-mini-high) and GitHub Copilot (GPT-4o)"
+  },
+  "error": {
+    "permissionDenied": "User denied the request for Geolocation.",
+    "positionUnavailable": "Location information is unavailable.",
+    "timeout": "The request to get user location timed out.",
+    "unknown": "An unknown error occurred.",
+    "geolocationNotSupported": "Geolocation is not supported by your browser.",
+    "location": "Error obtaining location"
   }
-  
+}

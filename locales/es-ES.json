@@ -1,51 +1,50 @@
 {
-    "navbar": {
-      "title": "Pronóstico del Tiempo",
-      "language": "Idioma"
-    },
-    "form": {
-      "header": "Introduce coordenadas o selecciona una ciudad",
-      "selectCity": "Selecciona ciudad",
-      "custom": "Personalizado",
-      "latitude": "Latitud",
-      "longitude": "Longitud",
-      "fetch": "Obtener Pronóstico",
-      "useCurrentLocation": "Utilizar mi ubicación actual",
-      "fetchLocation": "Obteniendo ubicación..."
-    },
-    "accordion": {
-      "period": "Período",
-      "precipitationPercentage": "Precipitación (%)",
-      "precipitationType": "Tipo de precipitación",
-      "precipitationQuantity": "Cantidad de precipitación",
-      "temperature": "Temperatura",
-      "feelsLike": "Sensación térmica",
-      "noDetails": "No hay detalles de pronóstico disponibles."
-    },
-    "forecast": {
-      "shortTerm": "Pronóstico a Corto Plazo",
-      "longTerm": "Pronóstico a Largo Plazo",
-      "noData": "No hay datos cargados.",
-      "loading": "Cargando pronóstico..."
-    },
-    "alerts": {
-      "totalSnow": "Nieve total: {{total}} cm",
-      "snowWarning": "Se pronostican más de {{threshold}}cm de nieve.",
-      "hail": "Se detectó granizo en el pronóstico.",
-      "weatherAlert": "Alertas meteorológicas presentes.",
-      "noAlerts": "No se han detectado condiciones meteorológicas significativas."
-    },
-    "footer": {
-      "detectedLanguage": "Idioma detectado:",
-      "generatedBy": "Código generado con ChatGPT (o3-mini-high)"
-    },
-    "error": {
-      "permissionDenied": "El usuario ha denegado la solicitud de geolocalización.",
-      "positionUnavailable": "La información de ubicación no está disponible.",
-      "timeout": "La solicitud de geolocalización ha caducado.",
-      "unknown": "Se produjo un error desconocido.",
-      "geolocationNotSupported": "La geolocalización no es compatible con su navegador.",
-      "location": "Error al obtener la ubicación"
-    }
+  "navbar": {
+    "title": "Pronóstico del tiempo",
+    "language": "Idioma"
+  },
+  "form": {
+    "header": "Introduce coordenadas o selecciona una ciudad",
+    "selectCity": "Selecciona ciudad",
+    "custom": "Personalizado",
+    "latitude": "Latitud",
+    "longitude": "Longitud",
+    "fetch": "Obtener pronóstico",
+    "useCurrentLocation": "Utilizar mi ubicación actual",
+    "fetchLocation": "Obteniendo ubicación..."
+  },
+  "forecast": {
+    "shortTerm": "Pronóstico a corto plazo",
+    "longTerm": "Pronóstico a largo plazo",
+    "noData": "No hay datos cargados.",
+    "loading": "Cargando pronóstico..."
+  },
+  "alerts": {
+    "totalSnow": "Nieve total: {{total}} cm",
+    "snowWarning": "Se pronostican más de {{threshold}} cm de nieve.",
+    "hail": "Se detectó granizo en el pronóstico.",
+    "weatherAlert": "Alertas meteorológicas presentes.",
+    "noAlerts": "No se han detectado condiciones meteorológicas significativas."
+  },
+  "accordion": {
+    "period": "Período",
+    "precipitationPercentage": "Precipitación (%)",
+    "precipitationType": "Tipo de precipitación",
+    "precipitationQuantity": "Cantidad de precipitación",
+    "temperature": "Temperatura",
+    "feelsLike": "Sensación térmica",
+    "noDetails": "No hay detalles disponibles."
+  },
+  "footer": {
+    "detectedLanguage": "Idioma detectado:",
+    "generatedBy": "Código generado con ChatGPT (o3-mini-high) y GitHub Copilot (GPT-4o)"
+  },
+  "error": {
+    "permissionDenied": "El usuario ha denegado la solicitud de geolocalización.",
+    "positionUnavailable": "La información de ubicación no está disponible.",
+    "timeout": "La solicitud de geolocalización ha caducado.",
+    "unknown": "Se produjo un error desconocido.",
+    "geolocationNotSupported": "La geolocalización no es compatible con tu navegador.",
+    "location": "Error al obtener la ubicación"
   }
-  
+}
