@@ -16,6 +16,11 @@ i18next
     updateActiveLanguageDisplay();
   });
 
+// Helper: Round numeric values to one decimal place.
+function formatNumber(value) {
+  return (typeof value === 'number') ? value.toFixed(1) : value;
+}
+
 // Helper: update all elements with data-i18n attribute.
 function updateContent() {
   $('[data-i18n]').each(function(){
@@ -138,7 +143,6 @@ $(document).ready(function() {
   // Handle "Use Current Location" button click.
   $("#useCurrentLocationBtn").click(function() {
     if (navigator.geolocation) {
-      // Disable the button and show a localized loading message.
       $(this).prop("disabled", true).text(i18next.t("form.fetchLocation"));
       
       navigator.geolocation.getCurrentPosition(function(position) {
@@ -189,11 +193,11 @@ $(document).ready(function() {
     // Fetch and evaluate short-term forecast.
     weatherChecker.fetchShortTermForecast(6)
       .then(function(rawData) {
-        console.log(rawData);
         const conditions = weatherChecker.evaluateShortTermForecast(rawData);
-        console.log(conditions);
+        // Use display unit from API if provided; otherwise default to "cm" for snow.
+        const snowUnit = (conditions.display && conditions.display.unit && conditions.display.unit.snow) ? conditions.display.unit.snow : "cm";
         let message = "";
-        message += i18next.t("alerts.totalSnow", { total: conditions.totalSnow }) + "<br>";
+        message += i18next.t("alerts.totalSnow", { total: formatNumber(conditions.totalSnow), unit: snowUnit }) + "<br>";
         if (conditions.significantSnow) {
           message += i18next.t("alerts.snowWarning", { threshold: weatherChecker.snowThreshold }) + "<br>";
         }
@@ -220,9 +224,7 @@ $(document).ready(function() {
     // Fetch and evaluate long-term forecast.
     weatherChecker.fetchLongTermForecast(15, 0)
       .then(function(rawData) {
-        console.log(rawData);
         const conditions = weatherChecker.evaluateLongTermForecast(rawData);
-        console.log(conditions);
         let message = "";
         if (conditions.significantSnow) {
           message += i18next.t("alerts.snowWarning", { threshold: weatherChecker.snowThreshold }) + "<br>";
@@ -254,11 +256,20 @@ $(document).ready(function() {
 // Helper: build an accordion with details for each long-term forecast period.
 function buildLongTermAccordion(conditions) {
   const periods = conditions.periods || [];
+  // Use display units from API if provided; otherwise default to rain in "mm" and snow in "cm".
+  const displayUnits = (conditions.display && conditions.display.unit) ? conditions.display.unit : { rain: "mm", snow: "cm" };
   let accordionHTML = '<div class="accordion" id="forecastAccordion">';
   if (periods.length > 0) {
     periods.forEach((period, index) => {
       const collapseId = "collapsePeriod" + index;
       const headingId = "headingPeriod" + index;
+      // Determine the precipitation unit based on the type.
+      let precipUnit = "";
+      if (period.precipitationType.toLowerCase() === "snow") {
+        precipUnit = displayUnits.snow || "cm";
+      } else if (period.precipitationType.toLowerCase() === "rain") {
+        precipUnit = displayUnits.rain || "mm";
+      }
       accordionHTML += `
         <div class="accordion-item">
           <h2 class="accordion-header" id="${headingId}">
@@ -268,16 +279,25 @@ function buildLongTermAccordion(conditions) {
           </h2>
           <div id="${collapseId}" class="accordion-collapse collapse ${index === 0 ? "show" : ""}" aria-labelledby="${headingId}" data-bs-parent="#forecastAccordion">
             <div class="accordion-body">
-              <p>${i18next.t("accordion.precipitationPercentage")}: ${period.precipitationPercentage}%</p>
+              <p>${i18next.t("accordion.precipitationPercentage")}: ${formatNumber(period.precipitationPercentage)}%</p>
               <p>${i18next.t("accordion.precipitationType")}: ${period.precipitationType}</p>
-              <p>${i18next.t("accordion.precipitationQuantity")}: ${period.precipitationQuantity} mm</p>
-              <p>${i18next.t("accordion.temperature")}: ${period.temperature}°C</p>
-              <p>${i18next.t("accordion.feelsLike")}: ${period.feelsLike}°C</p>
+              <p>${i18next.t("accordion.precipitationQuantity")}: ${formatNumber(period.precipitationQuantity)} ${precipUnit}</p>
+              <p>${i18next.t("accordion.temperature")}: ${formatNumber(period.temperature)}°C</p>
+              <p>${i18next.t("accordion.feelsLike")}: ${formatNumber(period.feelsLike)}°C</p>
             </div>
           </div>
         </div>
       `;
     });
+    if (conditions.specialWeatherStatement) {
+      accordionHTML += `
+        <div class="accordion-item">
+          <div class="accordion-body">
+            <p>${conditions.specialWeatherStatement}</p>
+          </div>
+        </div>
+      `;
+    }
   } else {
     accordionHTML += `<div class="accordion-item"><div class="accordion-body">${i18next.t("accordion.noDetails")}</div></div>`;
   }

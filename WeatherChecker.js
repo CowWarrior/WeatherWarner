@@ -45,15 +45,17 @@ export default class WeatherChecker {
   /**
    * Evaluates the short-term forecast data.
    * @param {Object} data - Raw JSON data from the short-term forecast API.
-   * @returns {Object} An object with evaluation results.
+   * @returns {Object} An object with evaluation results and display unit information.
    */
   evaluateShortTermForecast(data) {
     const conditions = {
       totalSnow: 0,
       significantSnow: false,
       hailDetected: false,
-      weatherAlert: false
+      weatherAlert: false,
+      display: {} // to hold unit info (e.g., unit.snow)
     };
+    
     if (data.shortTerm && Array.isArray(data.shortTerm)) {
       data.shortTerm.forEach(forecast => {
         if (forecast.snow && typeof forecast.snow.value === 'number') {
@@ -70,13 +72,15 @@ export default class WeatherChecker {
     if (data.weatherAlert && Array.isArray(data.weatherAlert) && data.weatherAlert.length > 0) {
       conditions.weatherAlert = true;
     }
+    // Capture display units from the API if available.
+    conditions.display = (data.shortTerm && data.shortTerm.display) ? data.shortTerm.display : {};
     return conditions;
   }
   
   /**
    * Evaluates the long-term forecast data.
    * @param {Object} data - Raw JSON data from the long-term forecast API.
-   * @returns {Object} An object with evaluation results and period details.
+   * @returns {Object} An object with evaluation results, detailed period information, and display unit info.
    */
   evaluateLongTermForecast(data) {
     const conditions = {
@@ -84,8 +88,10 @@ export default class WeatherChecker {
       significantSnow: false,
       hailDetected: false,
       weatherAlert: false,
-      periods: []  // Detailed forecast data for each period.
+      periods: [],  // Detailed forecast data for each period.
+      display: {}   // to hold unit info (e.g., unit.rain, unit.snow)
     };
+    
     if (data.longTerm && Array.isArray(data.longTerm)) {
       data.longTerm.forEach(forecast => {
         if (forecast.snow && typeof forecast.snow.value === 'number') {
@@ -94,11 +100,11 @@ export default class WeatherChecker {
         if (forecast.hail === true) {
           conditions.hailDetected = true;
         }
-        // Build detailed period data.
+        // Collect detailed period data.
         conditions.periods.push({
           precipitationPercentage: forecast.pop || forecast.precipitationPercentage || 0,
           precipitationType: forecast.weatherCode ? forecast.weatherCode.text : "N/A",
-          precipitationQuantity: forecast.rain && typeof forecast.rain.value === 'number' ? forecast.rain.value : 0,
+          precipitationQuantity: (forecast.rain && typeof forecast.rain.value === 'number') ? forecast.rain.value : 0,
           temperature: forecast.temperature ? forecast.temperature.value : "N/A",
           feelsLike: forecast.feelsLike || "N/A"
         });
@@ -109,6 +115,12 @@ export default class WeatherChecker {
     }
     if (data.weatherAlert && Array.isArray(data.weatherAlert) && data.weatherAlert.length > 0) {
       conditions.weatherAlert = true;
+    }
+    // Capture display units from the API if available.
+    conditions.display = (data.longTerm && data.longTerm.display) ? data.longTerm.display : {};
+    // Capture any special weather statements.
+    if (data.longTerm && data.longTerm.specialWeatherStatement) {
+      conditions.specialWeatherStatement = data.longTerm.specialWeatherStatement;
     }
     return conditions;
   }
