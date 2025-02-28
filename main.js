@@ -63,7 +63,7 @@ function getFullLanguageName(locale) {
   return mapping[locale] || locale;
 }
 
-// Helper: update the active language display (flag and full language name).
+// Helper: update the active language display (flag and full language name) next to the language dropdown.
 function updateActiveLanguageDisplay() {
   const flagClass = getFlagIcon(currentLocale);
   $("#activeLanguageIcon").attr("class", "fi " + flagClass + " me-2");
@@ -138,6 +138,7 @@ $(document).ready(function() {
   // Handle "Use Current Location" button click.
   $("#useCurrentLocationBtn").click(function() {
     if (navigator.geolocation) {
+      // Disable the button and show a localized loading message.
       $(this).prop("disabled", true).text(i18next.t("form.fetchLocation"));
       
       navigator.geolocation.getCurrentPosition(function(position) {
@@ -185,9 +186,12 @@ $(document).ready(function() {
     $("#shortTermCard").removeClass("bg-warning bg-danger text-white");
     $("#longTermCard").removeClass("bg-warning bg-danger text-white");
     
-    // Fetch and display the short-term forecast.
+    // Fetch and evaluate short-term forecast.
     weatherChecker.fetchShortTermForecast(6)
-      .then(function(conditions) {
+      .then(function(rawData) {
+        console.log(rawData);
+        const conditions = weatherChecker.evaluateShortTermForecast(rawData);
+        console.log(conditions);
         let message = "";
         message += i18next.t("alerts.totalSnow", { total: conditions.totalSnow }) + "<br>";
         if (conditions.significantSnow) {
@@ -213,9 +217,12 @@ $(document).ready(function() {
         $("#short-term-forecast").html("Error fetching short-term forecast.");
       });
     
-    // Fetch and display the long-term forecast.
+    // Fetch and evaluate long-term forecast.
     weatherChecker.fetchLongTermForecast(15, 0)
-      .then(function(conditions) {
+      .then(function(rawData) {
+        console.log(rawData);
+        const conditions = weatherChecker.evaluateLongTermForecast(rawData);
+        console.log(conditions);
         let message = "";
         if (conditions.significantSnow) {
           message += i18next.t("alerts.snowWarning", { threshold: weatherChecker.snowThreshold }) + "<br>";
@@ -235,7 +242,7 @@ $(document).ready(function() {
         } else if (conditions.totalSnow > weatherChecker.snowThreshold) {
           $("#longTermCard").addClass("bg-warning");
         }
-        // Build the accordion to show details for each forecast period.
+        // Build an accordion with detailed long-term forecast information.
         buildLongTermAccordion(conditions);
       })
       .catch(function() {
@@ -246,7 +253,6 @@ $(document).ready(function() {
 
 // Helper: build an accordion with details for each long-term forecast period.
 function buildLongTermAccordion(conditions) {
-  // Assume the detailed forecast periods are in conditions.periods (an array)
   const periods = conditions.periods || [];
   let accordionHTML = '<div class="accordion" id="forecastAccordion">';
   if (periods.length > 0) {
