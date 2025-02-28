@@ -256,51 +256,87 @@ $(document).ready(function() {
 // Helper: build an accordion with details for each long-term forecast period.
 function buildLongTermAccordion(conditions) {
   const periods = conditions.periods || [];
-  // Use display units from API if provided; otherwise default to rain in "mm" and snow in "cm".
   const displayUnits = (conditions.display && conditions.display.unit) ? conditions.display.unit : { rain: "mm", snow: "cm" };
-  let accordionHTML = '<div class="accordion" id="forecastAccordion">';
+  const accordionContainer = document.createElement('div');
+  accordionContainer.className = 'accordion';
+  accordionContainer.id = 'forecastAccordion';
+
   if (periods.length > 0) {
     periods.forEach((period, index) => {
       const collapseId = "collapsePeriod" + index;
       const headingId = "headingPeriod" + index;
-      // Determine the precipitation unit based on the type.
-      let precipUnit = "";
-      if (period.precipitationType.toLowerCase() === "snow") {
-        precipUnit = displayUnits.snow || "cm";
-      } else if (period.precipitationType.toLowerCase() === "rain") {
-        precipUnit = displayUnits.rain || "mm";
-      }
-      accordionHTML += `
-        <div class="accordion-item">
-          <h2 class="accordion-header" id="${headingId}">
-            <button class="accordion-button ${index === 0 ? "" : "collapsed"}" type="button" data-bs-toggle="collapse" data-bs-target="#${collapseId}" aria-expanded="${index === 0 ? "true" : "false"}" aria-controls="${collapseId}">
-              ${i18next.t("accordion.period")} ${index + 1}
-            </button>
-          </h2>
-          <div id="${collapseId}" class="accordion-collapse collapse ${index === 0 ? "show" : ""}" aria-labelledby="${headingId}" data-bs-parent="#forecastAccordion">
-            <div class="accordion-body">
-              <p>${i18next.t("accordion.precipitationPercentage")}: ${formatNumber(period.precipitationPercentage)}%</p>
-              <p>${i18next.t("accordion.precipitationType")}: ${period.precipitationType}</p>
-              <p>${i18next.t("accordion.precipitationQuantity")}: ${formatNumber(period.precipitationQuantity)} ${precipUnit}</p>
-              <p>${i18next.t("accordion.temperature")}: ${formatNumber(period.temperature)}°C</p>
-              <p>${i18next.t("accordion.feelsLike")}: ${formatNumber(period.feelsLike)}°C</p>
-            </div>
-          </div>
-        </div>
-      `;
+      const accordionItem = document.createElement('div');
+      accordionItem.className = 'accordion-item';
+
+      const accordionHeader = document.createElement('h2');
+      accordionHeader.className = 'accordion-header';
+      accordionHeader.id = headingId;
+
+      const accordionButton = document.createElement('button');
+      accordionButton.className = `accordion-button ${index === 0 ? "" : "collapsed"}`;
+      accordionButton.type = 'button';
+      accordionButton.dataset.bsToggle = 'collapse';
+      accordionButton.dataset.bsTarget = `#${collapseId}`;
+      accordionButton.ariaExpanded = index === 0 ? "true" : "false";
+      accordionButton.ariaControls = collapseId;
+      accordionButton.textContent = `${i18next.t("accordion.period")} ${index + 1}`;
+
+      accordionHeader.appendChild(accordionButton);
+      accordionItem.appendChild(accordionHeader);
+
+      const accordionCollapse = document.createElement('div');
+      accordionCollapse.id = collapseId;
+      accordionCollapse.className = `accordion-collapse collapse ${index === 0 ? "show" : ""}`;
+      accordionCollapse.ariaLabelledby = headingId;
+      accordionCollapse.dataset.bsParent = '#forecastAccordion';
+
+      const accordionBody = document.createElement('div');
+      accordionBody.className = 'accordion-body';
+
+      const precipUnit = period.precipitationType.toLowerCase() === "snow" ? displayUnits.snow : displayUnits.rain;
+
+      const details = [
+        { label: i18next.t("accordion.precipitationPercentage"), value: `${formatNumber(period.precipitationPercentage)}%` },
+        { label: i18next.t("accordion.precipitationType"), value: period.precipitationType },
+        { label: i18next.t("accordion.precipitationQuantity"), value: `${formatNumber(period.precipitationQuantity)} ${precipUnit}` },
+        { label: i18next.t("accordion.temperature"), value: `${formatNumber(period.temperature)}°C` },
+        { label: i18next.t("accordion.feelsLike"), value: `${formatNumber(period.feelsLike)}°C` }
+      ];
+
+      details.forEach(detail => {
+        const p = document.createElement('p');
+        p.textContent = `${detail.label}: ${detail.value}`;
+        accordionBody.appendChild(p);
+      });
+
+      accordionCollapse.appendChild(accordionBody);
+      accordionItem.appendChild(accordionCollapse);
+      accordionContainer.appendChild(accordionItem);
     });
+
     if (conditions.specialWeatherStatement) {
-      accordionHTML += `
-        <div class="accordion-item">
-          <div class="accordion-body">
-            <p>${conditions.specialWeatherStatement}</p>
-          </div>
-        </div>
-      `;
+      const specialItem = document.createElement('div');
+      specialItem.className = 'accordion-item';
+
+      const specialBody = document.createElement('div');
+      specialBody.className = 'accordion-body';
+      specialBody.innerHTML = `<p>${conditions.specialWeatherStatement}</p>`;
+
+      specialItem.appendChild(specialBody);
+      accordionContainer.appendChild(specialItem);
     }
   } else {
-    accordionHTML += `<div class="accordion-item"><div class="accordion-body">${i18next.t("accordion.noDetails")}</div></div>`;
+    const noDetailsItem = document.createElement('div');
+    noDetailsItem.className = 'accordion-item';
+
+    const noDetailsBody = document.createElement('div');
+    noDetailsBody.className = 'accordion-body';
+    noDetailsBody.textContent = i18next.t("accordion.noDetails");
+
+    noDetailsItem.appendChild(noDetailsBody);
+    accordionContainer.appendChild(noDetailsItem);
   }
-  accordionHTML += '</div>';
-  $("#longTermAccordionContainer").html(accordionHTML);
+
+  document.getElementById('longTermAccordionContainer').innerHTML = '';
+  document.getElementById('longTermAccordionContainer').appendChild(accordionContainer);
 }
