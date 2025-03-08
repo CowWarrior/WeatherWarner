@@ -1,0 +1,36 @@
+{
+"locales": {
+    "en-CA": {
+        "language": "English (Canada)",
+        "flag": "fi-ca"
+    },
+    "en-US": {
+        "language": "English (US)",
+        "flag": "fi-us"
+    },
+    "fr-CA": {
+        "language": "Français (Canada)",
+        "flag": "fi-ca-qc"
+    },
+    "fr-FR": {
+        "language": "Français (France)",
+        "flag": "fi-fr"
+    },
+    "es-MX": {
+        "language": "Español (México)",
+        "flag": "fi-mx"
+    },
+    "es-ES": {
+        "language": "Español (España)",
+        "flag": "fi-es"
+    },
+    "de-DE": {
+        "language": "Deutsch (Deutschland)",
+        "flag": "fi-de"
+    },
+    "de-CH": {
+        "language": "Deutsch (Schweiz)",
+        "flag": "fi-ch"
+    }
+}
+}

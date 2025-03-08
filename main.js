@@ -35,37 +35,21 @@ function updateFooter() {
   $("#detectedLanguage").text(navigator.language);
 }
 
+// Load locale data from locale.json.
+let localeData = {};
+
+$.getJSON('locale.json', function(data) {
+  localeData = data.locales;
+});
+
 // Helper: mapping from locale to flag icon class using Flag Icons v7.2.3 and Flag Icons CA.
 function getFlagIcon(locale) {
-  switch (locale) {
-    case "en-CA":
-      return "fi-ca";
-    case "fr-CA":
-      return "fi-ca-qc"; // French Canada uses the specialized flag from Flag Icons CA.
-    case "en-US":
-      return "fi-us";
-    case "fr-FR":
-      return "fi-fr";
-    case "es-MX":
-      return "fi-mx";
-    case "es-ES":
-      return "fi-es";
-    default:
-      return "";
-  }
+  return localeData[locale] ? localeData[locale].flag : "";
 }
 
 // Helper: mapping from locale to full language name.
 function getFullLanguageName(locale) {
-  const mapping = {
-    "en-CA": "English (Canada)",
-    "en-US": "English (US)",
-    "fr-CA": "Français (Canada)",
-    "fr-FR": "Français (France)",
-    "es-MX": "Español (México)",
-    "es-ES": "Español (España)"
-  };
-  return mapping[locale] || locale;
+  return localeData[locale] ? localeData[locale].language : locale;
 }
 
 // Helper: update the active language display (flag and full language name) next to the language dropdown.
@@ -105,6 +89,46 @@ function buildCityDropdown(cities) {
   }
 }
 
+// Function to build the language dropdown.
+function buildLanguageDropdown() {
+  const $languageSelect = $('#languageDropdownMenu');
+  $languageSelect.empty();
+
+  // Populate the language dropdown with available locales.
+  Object.keys(localeData).forEach(locale => {
+    const { language, flag } = localeData[locale];
+    
+    const listItem = $('<li>');
+    const anchor = $('<a>', {
+      class: 'dropdown-item language-option',
+      'data-locale': locale,
+      href: '#'
+    });
+
+    const flagSpan = $('<span>', {
+      class: `fi ${flag} me-2`
+    });
+
+    anchor.append(flagSpan).append(document.createTextNode(language));
+    listItem.append(anchor);
+    $languageSelect.append(listItem);
+  });
+
+  // Handle language selection from the hamburger menu.
+  $(".language-option").click(function(e) {
+    e.preventDefault();
+    const newLocale = $(this).data("locale");
+    i18next.changeLanguage(newLocale, function(err, t) {
+      currentLocale = newLocale;
+      updateContent();
+      buildCityDropdown(cityData);
+      updateActiveLanguageDisplay();
+    });
+  });
+
+}
+
+
 // Global variable to store city data.
 let cityData = [];
 
@@ -113,6 +137,7 @@ $(document).ready(function() {
   $.getJSON('cities.json', function(cities) {
     cityData = cities;
     buildCityDropdown(cityData);
+    buildLanguageDropdown();
   });
   
   // Update coordinate fields when the city dropdown selection changes.
@@ -126,18 +151,6 @@ $(document).ready(function() {
       $("#latitude").val(coords[0]);
       $("#longitude").val(coords[1]);
     }
-  });
-  
-  // Handle language selection from the hamburger menu.
-  $(".language-option").click(function(e) {
-    e.preventDefault();
-    const newLocale = $(this).data("locale");
-    i18next.changeLanguage(newLocale, function(err, t) {
-      currentLocale = newLocale;
-      updateContent();
-      buildCityDropdown(cityData);
-      updateActiveLanguageDisplay();
-    });
   });
   
   // Handle "Use Current Location" button click.
