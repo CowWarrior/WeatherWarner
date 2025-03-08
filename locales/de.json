@@ -1,0 +1,50 @@
+{
+    "navbar": {
+      "title": "Wettervorhersage",
+      "language": "Sprache"
+    },
+    "form": {
+      "header": "Geben Sie Koordinaten ein oder wählen Sie eine Stadt",
+      "selectCity": "Stadt auswählen",
+      "custom": "Benutzerdefiniert",
+      "latitude": "Breitengrad",
+      "longitude": "Längengrad",
+      "fetch": "Vorhersage abrufen",
+      "useCurrentLocation": "Aktuellen Standort verwenden",
+      "fetchLocation": "Standort wird abgerufen..."
+    },
+    "forecast": {
+      "shortTerm": "Kurzfristige Vorhersage",
+      "longTerm": "Langfristige Vorhersage",
+      "noData": "Keine Daten geladen.",
+      "loading": "Vorhersage wird geladen..."
+    },
+    "alerts": {
+      "totalSnow": "Gesamtschnee: {{total}} cm",
+      "snowWarning": "Mehr als {{threshold}} cm Schnee werden prognostiziert.",
+      "hail": "Hagel in der Vorhersage festgestellt.",
+      "weatherAlert": "Wetterwarnungen vorhanden.",
+      "noAlerts": "Keine signifikanten Wetterbedingungen festgestellt."
+    },
+    "accordion": {
+      "period": "Zeitraum",
+      "snow": "Schnee",
+      "rain": "Regen",
+      "temperature": "Temperatur",
+      "feelsLike": "Gefühlt",
+      "noDetails": "Keine detaillierte Vorhersage verfügbar."
+    },
+    "footer": {
+      "detectedLanguage": "Erkannte Sprache:",
+      "generatedBy": "Code generiert mit ChatGPT (o3-mini-high) und GitHub Copilot (GPT-4o)"
+    },
+    "error": {
+      "permissionDenied": "Der Benutzer hat die Anfrage zur Geolokalisierung abgelehnt.",
+      "positionUnavailable": "Standortinformationen sind nicht verfügbar.",
+      "timeout": "Die Anfrage zur Ermittlung des Standorts ist abgelaufen.",
+      "unknown": "Ein unbekannter Fehler ist aufgetreten.",
+      "geolocationNotSupported": "Die Geolokalisierung wird von Ihrem Browser nicht unterstützt.",
+      "location": "Fehler beim Abrufen des Standorts"
+    }
+  }
+  
