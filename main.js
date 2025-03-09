@@ -1,20 +1,13 @@
 import WeatherChecker from './WeatherChecker.js';
 
-// Initialize i18next with XHR backend and language detector.
-i18next
-  .use(i18nextXHRBackend)
-  .use(i18nextBrowserLanguageDetector)
-  .init({
-    fallbackLng: 'en-CA',
-    debug: false,
-    backend: {
-      loadPath: 'locales/{{lng}}.json'
-    }
-  }, function(err, t) {
-    updateContent();
-    updateFooter();
-    updateActiveLanguageDisplay();
-  });
+// Global variable to store city data.
+let cityData = [];
+
+// Global variable to store locale data.
+let localeData = {};
+
+// Global variable to hold the current locale.
+let currentLocale = "";
 
 // Helper: Round numeric values to one decimal place.
 function formatNumber(value) {
@@ -35,13 +28,6 @@ function updateFooter() {
   $("#detectedLanguage").text(navigator.language);
 }
 
-// Load locale data from locale.json.
-let localeData = {};
-
-$.getJSON('locale.json', function(data) {
-  localeData = data.locales;
-});
-
 // Helper: mapping from locale to flag icon class using Flag Icons v7.2.3 and Flag Icons CA.
 function getFlagIcon(locale) {
   return localeData[locale] ? localeData[locale].flag : "";
@@ -59,10 +45,7 @@ function updateActiveLanguageDisplay() {
   $("#activeLanguageText").text(getFullLanguageName(currentLocale));
 }
 
-// Global variable to hold the current locale.
-let currentLocale = i18next.language || 'en-CA';
-
-// Function to build the city dropdown based on the current locale.
+// Helper: build the city dropdown based on the current locale.
 function buildCityDropdown(cities) {
   const $citySelect = $('#citySelect');
   $citySelect.empty();
@@ -89,7 +72,7 @@ function buildCityDropdown(cities) {
   }
 }
 
-// Function to build the language dropdown.
+// Helper: build the language dropdown.
 function buildLanguageDropdown() {
   const $languageSelect = $('#languageDropdownMenu');
   $languageSelect.empty();
@@ -128,16 +111,122 @@ function buildLanguageDropdown() {
 
 }
 
+// Helper: build an accordion with details for each long-term forecast period.
+function buildLongTermAccordion(conditions) {
+  const periods = conditions.periods || [];
+  const displayUnits = (conditions.display && conditions.display.unit) ? conditions.display.unit : { rain: "mm", snow: "cm" };
+  const accordionContainer = document.createElement('div');
+  accordionContainer.className = 'accordion';
+  accordionContainer.id = 'forecastAccordion';
 
-// Global variable to store city data.
-let cityData = [];
+  if (periods.length > 0) {
+    periods.forEach((period, index) => {
+      const collapseId = "collapsePeriod" + index;
+      const headingId = "headingPeriod" + index;
+      const accordionItem = document.createElement('div');
+      accordionItem.className = 'accordion-item';
+
+      const accordionHeader = document.createElement('h2');
+      accordionHeader.className = 'accordion-header';
+      accordionHeader.id = headingId;
+
+      const accordionButton = document.createElement('button');
+      accordionButton.className = `accordion-button ${index === 0 ? "" : "collapsed"}`;
+      accordionButton.type = 'button';
+      accordionButton.dataset.bsToggle = 'collapse';
+      accordionButton.dataset.bsTarget = `#${collapseId}`;
+      accordionButton.ariaExpanded = index === 0 ? "true" : "false";
+      accordionButton.ariaControls = collapseId;
+      accordionButton.textContent = `${i18next.t("accordion.period")} ${index + 1}`;
+
+      accordionHeader.appendChild(accordionButton);
+      accordionItem.appendChild(accordionHeader);
+
+      const accordionCollapse = document.createElement('div');
+      accordionCollapse.id = collapseId;
+      accordionCollapse.className = `accordion-collapse collapse ${index === 0 ? "show" : ""}`;
+      accordionCollapse.ariaLabelledby = headingId;
+      accordionCollapse.dataset.bsParent = '#forecastAccordion';
+
+      const accordionBody = document.createElement('div');
+      accordionBody.className = 'accordion-body';
+
+      const precipUnit = period.precipitationType.toLowerCase() === "snow" ? displayUnits.snow : displayUnits.rain;
+
+      const details = [
+        { label: i18next.t("accordion.precipitationPercentage"), value: `${formatNumber(period.precipitationPercentage)}%` },
+        { label: i18next.t("accordion.precipitationType"), value: period.precipitationType },
+        { label: i18next.t("accordion.precipitationQuantity"), value: `${formatNumber(period.precipitationQuantity)} ${precipUnit}` },
+        { label: i18next.t("accordion.temperature"), value: `${formatNumber(period.temperature)}°C` },
+        { label: i18next.t("accordion.feelsLike"), value: `${formatNumber(period.feelsLike)}°C` }
+      ];
+
+      details.forEach(detail => {
+        const p = document.createElement('p');
+        p.textContent = `${detail.label}: ${detail.value}`;
+        accordionBody.appendChild(p);
+      });
+
+      accordionCollapse.appendChild(accordionBody);
+      accordionItem.appendChild(accordionCollapse);
+      accordionContainer.appendChild(accordionItem);
+    });
+
+    if (conditions.specialWeatherStatement) {
+      const specialItem = document.createElement('div');
+      specialItem.className = 'accordion-item';
+
+      const specialBody = document.createElement('div');
+      specialBody.className = 'accordion-body';
+      specialBody.innerHTML = `<p>${conditions.specialWeatherStatement}</p>`;
+
+      specialItem.appendChild(specialBody);
+      accordionContainer.appendChild(specialItem);
+    }
+  } else {
+    const noDetailsItem = document.createElement('div');
+    noDetailsItem.className = 'accordion-item';
+
+    const noDetailsBody = document.createElement('div');
+    noDetailsBody.className = 'accordion-body';
+    noDetailsBody.textContent = i18next.t("accordion.noDetails");
+
+    noDetailsItem.appendChild(noDetailsBody);
+    accordionContainer.appendChild(noDetailsItem);
+  }
+
+  document.getElementById('longTermAccordionContainer').innerHTML = '';
+  document.getElementById('longTermAccordionContainer').appendChild(accordionContainer);
+}
 
 $(document).ready(function() {
+  // Initialize i18next with XHR backend and language detector.
+  i18next
+    .use(i18nextXHRBackend)
+    .use(i18nextBrowserLanguageDetector)
+    .init({
+      fallbackLng: 'en-CA',
+      debug: false,
+      backend: {
+        loadPath: 'locales/{{lng}}.json'
+      }
+    }, function(err, t) {
+      currentLocale = i18next.language || 'en-CA';
+      updateContent();
+      updateFooter();
+      updateActiveLanguageDisplay();
+    });
+
+  // Load locale data from locale.json.
+  $.getJSON('locale.json', function(data) {
+    localeData = data.locales;
+    buildLanguageDropdown();
+  }); 
+  
   // Load cities data from cities.json.
   $.getJSON('cities.json', function(cities) {
     cityData = cities;
     buildCityDropdown(cityData);
-    buildLanguageDropdown();
   });
   
   // Update coordinate fields when the city dropdown selection changes.
@@ -266,90 +355,3 @@ $(document).ready(function() {
   });
 });
 
-// Helper: build an accordion with details for each long-term forecast period.
-function buildLongTermAccordion(conditions) {
-  const periods = conditions.periods || [];
-  const displayUnits = (conditions.display && conditions.display.unit) ? conditions.display.unit : { rain: "mm", snow: "cm" };
-  const accordionContainer = document.createElement('div');
-  accordionContainer.className = 'accordion';
-  accordionContainer.id = 'forecastAccordion';
-
-  if (periods.length > 0) {
-    periods.forEach((period, index) => {
-      const collapseId = "collapsePeriod" + index;
-      const headingId = "headingPeriod" + index;
-      const accordionItem = document.createElement('div');
-      accordionItem.className = 'accordion-item';
-
-      const accordionHeader = document.createElement('h2');
-      accordionHeader.className = 'accordion-header';
-      accordionHeader.id = headingId;
-
-      const accordionButton = document.createElement('button');
-      accordionButton.className = `accordion-button ${index === 0 ? "" : "collapsed"}`;
-      accordionButton.type = 'button';
-      accordionButton.dataset.bsToggle = 'collapse';
-      accordionButton.dataset.bsTarget = `#${collapseId}`;
-      accordionButton.ariaExpanded = index === 0 ? "true" : "false";
-      accordionButton.ariaControls = collapseId;
-      accordionButton.textContent = `${i18next.t("accordion.period")} ${index + 1}`;
-
-      accordionHeader.appendChild(accordionButton);
-      accordionItem.appendChild(accordionHeader);
-
-      const accordionCollapse = document.createElement('div');
-      accordionCollapse.id = collapseId;
-      accordionCollapse.className = `accordion-collapse collapse ${index === 0 ? "show" : ""}`;
-      accordionCollapse.ariaLabelledby = headingId;
-      accordionCollapse.dataset.bsParent = '#forecastAccordion';
-
-      const accordionBody = document.createElement('div');
-      accordionBody.className = 'accordion-body';
-
-      const precipUnit = period.precipitationType.toLowerCase() === "snow" ? displayUnits.snow : displayUnits.rain;
-
-      const details = [
-        { label: i18next.t("accordion.precipitationPercentage"), value: `${formatNumber(period.precipitationPercentage)}%` },
-        { label: i18next.t("accordion.precipitationType"), value: period.precipitationType },
-        { label: i18next.t("accordion.precipitationQuantity"), value: `${formatNumber(period.precipitationQuantity)} ${precipUnit}` },
-        { label: i18next.t("accordion.temperature"), value: `${formatNumber(period.temperature)}°C` },
-        { label: i18next.t("accordion.feelsLike"), value: `${formatNumber(period.feelsLike)}°C` }
-      ];
-
-      details.forEach(detail => {
-        const p = document.createElement('p');
-        p.textContent = `${detail.label}: ${detail.value}`;
-        accordionBody.appendChild(p);
-      });
-
-      accordionCollapse.appendChild(accordionBody);
-      accordionItem.appendChild(accordionCollapse);
-      accordionContainer.appendChild(accordionItem);
-    });
-
-    if (conditions.specialWeatherStatement) {
-      const specialItem = document.createElement('div');
-      specialItem.className = 'accordion-item';
-
-      const specialBody = document.createElement('div');
-      specialBody.className = 'accordion-body';
-      specialBody.innerHTML = `<p>${conditions.specialWeatherStatement}</p>`;
-
-      specialItem.appendChild(specialBody);
-      accordionContainer.appendChild(specialItem);
-    }
-  } else {
-    const noDetailsItem = document.createElement('div');
-    noDetailsItem.className = 'accordion-item';
-
-    const noDetailsBody = document.createElement('div');
-    noDetailsBody.className = 'accordion-body';
-    noDetailsBody.textContent = i18next.t("accordion.noDetails");
-
-    noDetailsItem.appendChild(noDetailsBody);
-    accordionContainer.appendChild(noDetailsItem);
-  }
-
-  document.getElementById('longTermAccordionContainer').innerHTML = '';
-  document.getElementById('longTermAccordionContainer').appendChild(accordionContainer);
-}
