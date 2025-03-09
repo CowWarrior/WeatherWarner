@@ -33,7 +33,11 @@
     "precipitationQuantity": "Precipitation quantity",
     "temperature": "Temperature",
     "feelsLike": "Feels like",
-    "noDetails": "No detailed forecast available."
+    "noDetails": "No detailed forecast available.",
+    "snow": "Snow",
+    "rain": "Rain",
+    "min": "Min",
+    "max": "Max"
   },
   "footer": {
     "detectedLanguage": "Detected Language:",

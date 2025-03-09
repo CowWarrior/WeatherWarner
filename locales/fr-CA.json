@@ -33,7 +33,11 @@
     "precipitationQuantity": "Quantité de précipitations",
     "temperature": "Température",
     "feelsLike": "Ressenti",
-    "noDetails": "Aucune prévision détaillée disponible."
+    "noDetails": "Aucune prévision détaillée disponible.",
+    "snow": "Neige",
+    "rain": "Pluie",
+    "min": "Min",
+    "max": "Max"
   },
   "footer": {
     "detectedLanguage": "Langue détectée :",

@@ -234,8 +234,41 @@ function handleFormSubmission(e) {
     });
 }
 
+// Helper: summarize long-term forecast period information.
+function summarizeLongTermPeriod(period, units) {
+  let summary = "";
+  let hasPrecipitation = false;
+
+  if (period.feelsLike) {
+    summary += `, ${formatNumber(period.feelsLike)}°${units.temperature}`;
+  } else if (period.day.feelsLike) {
+    summary += `, ${formatNumber(period.day.feelsLike)}°${units.temperature}`;
+  }
+
+  if (period.snow.value && period.snow.value > 0) {
+    summary += ` - ${i18next.t("accordion.snow")}: ${formatNumber(period.snow.value)}${units.snow}`;
+    hasPrecipitation = true;
+  }
+
+  if (period.rain.value && period.rain.value > 0) {
+    summary += ` - ${i18next.t("accordion.rain")}: ${formatNumber(period.rain.value)}${units.rain}`;
+    hasPrecipitation = true;
+  }
+
+  if (hasPrecipitation) {
+    if (period.pop) {
+      summary += ` - ${formatNumber(period.pop)}${units.pop}`;
+    } else if (period.day && period.day.pop) {
+      summary += ` - ${formatNumber(period.day.pop)}${units.pop}`;
+    }
+  }
+
+  return summary;
+}
+
 // Helper: build an accordion with details for each long-term forecast period.
 function buildLongTermAccordion(conditions) {
+  console.log(conditions);
   const periods = conditions.periods || [];
   const displayUnits = (conditions.display && conditions.display.unit) ? conditions.display.unit : { rain: "mm", snow: "cm" };
   const accordionContainer = document.createElement('div');
@@ -244,6 +277,8 @@ function buildLongTermAccordion(conditions) {
 
   if (periods.length > 0) {
     periods.forEach((period, index) => {
+      console.log(period);
+
       const collapseId = "collapsePeriod" + index;
       const headingId = "headingPeriod" + index;
       const accordionItem = document.createElement('div');
@@ -254,34 +289,44 @@ function buildLongTermAccordion(conditions) {
       accordionHeader.id = headingId;
 
       const accordionButton = document.createElement('button');
-      accordionButton.className = `accordion-button ${index === 0 ? "" : "collapsed"}`;
+      accordionButton.className = `accordion-button "collapsed"`;
       accordionButton.type = 'button';
       accordionButton.dataset.bsToggle = 'collapse';
       accordionButton.dataset.bsTarget = `#${collapseId}`;
       accordionButton.ariaExpanded = index === 0 ? "true" : "false";
       accordionButton.ariaControls = collapseId;
-      accordionButton.textContent = `${i18next.t("accordion.period")} ${index + 1}`;
+      //accordionButton.textContent = `${i18next.t("accordion.period")} ${index + 1}`;
+      //let periodName = new Date(period.time.local).toLocaleDateString(currentLocale, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+      //let periodName = new Date(period.time.local).toLocaleDateString(currentLocale, { weekday: 'long', month: 'long', day: 'numeric' });
+      let periodDate = new Date(period.time.local);
+      let periodName;
+      if (periodDate >= new Date(periodDate.getFullYear(), 11, 24) || periodDate <= new Date(periodDate.getFullYear(), 0, 7)) {
+        //show year if the date is around New Year
+        periodName = periodDate.toLocaleDateString(currentLocale, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+      } else {
+        periodName = periodDate.toLocaleDateString(currentLocale, { weekday: 'long', month: 'long', day: 'numeric' });
+      }
+      periodName = periodName.charAt(0).toUpperCase() + periodName.slice(1);
+      accordionButton.textContent = periodName + summarizeLongTermPeriod(period, displayUnits);
 
       accordionHeader.appendChild(accordionButton);
       accordionItem.appendChild(accordionHeader);
 
       const accordionCollapse = document.createElement('div');
       accordionCollapse.id = collapseId;
-      accordionCollapse.className = `accordion-collapse collapse ${index === 0 ? "show" : ""}`;
+      accordionCollapse.className = `accordion-collapse collapse`;
       accordionCollapse.ariaLabelledby = headingId;
       accordionCollapse.dataset.bsParent = '#forecastAccordion';
 
       const accordionBody = document.createElement('div');
       accordionBody.className = 'accordion-body';
 
-      const precipUnit = period.precipitationType.toLowerCase() === "snow" ? displayUnits.snow : displayUnits.rain;
-
       const details = [
-        { label: i18next.t("accordion.precipitationPercentage"), value: `${formatNumber(period.precipitationPercentage)}%` },
-        { label: i18next.t("accordion.precipitationType"), value: period.precipitationType },
-        { label: i18next.t("accordion.precipitationQuantity"), value: `${formatNumber(period.precipitationQuantity)} ${precipUnit}` },
-        { label: i18next.t("accordion.temperature"), value: `${formatNumber(period.temperature)}°C` },
-        { label: i18next.t("accordion.feelsLike"), value: `${formatNumber(period.feelsLike)}°C` }
+        { label: i18next.t("accordion.precipitationPercentage"), value: `${formatNumber(period.pop)}%` },
+        { label: i18next.t("accordion.snow"), value: `${formatNumber(period.snow.value)} ${displayUnits.snow}` },
+        { label: i18next.t("accordion.rain"), value: `${formatNumber(period.rain.value)} ${displayUnits.rain}` },
+        { label: i18next.t("accordion.min"), value: `${formatNumber(period.minTemperature)}°${displayUnits.temperature}` },
+        { label: i18next.t("accordion.max"), value: `${formatNumber(period.maxTemperature)}°${displayUnits.temperature}` }
       ];
 
       details.forEach(detail => {

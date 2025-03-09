@@ -67,18 +67,25 @@ export default class WeatherChecker {
    */
   evaluateLongTermForecast(data) {
     const conditions = new WeatherConditions();
+
+    // Load period information
     if (data.longTerm && Array.isArray(data.longTerm)) {
       data.longTerm.forEach(forecast => {
         this.evaluateForecast(forecast, conditions);
-        conditions.periods.push(this.extractPeriodData(forecast));
+        conditions.periods.push(forecast);
       });
     }
+
+    //Load display unit information
+    conditions.display = (data.display) ? data.display : {};
+
+    //Check for significant weather and alerts
     this.checkSignificantSnow(conditions);
     this.checkWeatherAlert(data, conditions);
-    conditions.display = (data.longTerm && data.longTerm.display) ? data.longTerm.display : {};
     if (data.longTerm && data.longTerm.specialWeatherStatement) {
       conditions.specialWeatherStatement = data.longTerm.specialWeatherStatement;
     }
+
     return conditions;
   }
 
@@ -89,16 +96,6 @@ export default class WeatherChecker {
     if (forecast.hail === true) {
       conditions.hailDetected = true;
     }
-  }
-
-  extractPeriodData(forecast) {
-    return {
-      precipitationPercentage: forecast.pop || forecast.precipitationPercentage || 0,
-      precipitationType: forecast.weatherCode ? forecast.weatherCode.text : "N/A",
-      precipitationQuantity: (forecast.rain && typeof forecast.rain.value === 'number') ? forecast.rain.value : 0,
-      temperature: forecast.temperature ? forecast.temperature.value : "N/A",
-      feelsLike: forecast.feelsLike || "N/A"
-    };
   }
 
   checkSignificantSnow(conditions) {
