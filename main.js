@@ -1,12 +1,8 @@
 import WeatherChecker from './WeatherChecker.js';
 
-// Global variable to store city data.
+// Global variables to store data
 let cityData = [];
-
-// Global variable to store locale data.
 let localeData = {};
-
-// Global variable to hold the current locale.
 let currentLocale = "";
 
 // Helper: Round numeric values to one decimal place.
@@ -98,17 +94,144 @@ function buildLanguageDropdown() {
   });
 
   // Handle language selection from the hamburger menu.
-  $(".language-option").click(function(e) {
-    e.preventDefault();
-    const newLocale = $(this).data("locale");
-    i18next.changeLanguage(newLocale, function(err, t) {
-      currentLocale = newLocale;
-      updateContent();
-      buildCityDropdown(cityData);
-      updateActiveLanguageDisplay();
-    });
-  });
+  $(".language-option").click(handleLanguageSelection);
+}
 
+// Handle language selection from the hamburger menu.
+function handleLanguageSelection(e) {
+  e.preventDefault();
+  const newLocale = $(this).data("locale");
+  i18next.changeLanguage(newLocale, function(err, t) {
+    currentLocale = newLocale;
+    updateContent();
+    buildCityDropdown(cityData);
+    updateActiveLanguageDisplay();
+  });
+}
+
+// Handle city selection change.
+function handleCitySelectionChange() {
+  const value = $(this).val();
+  if (value === "custom") {
+    $("#latitude").val("");
+    $("#longitude").val("");
+  } else {
+    const coords = value.split(",");
+    $("#latitude").val(coords[0]);
+    $("#longitude").val(coords[1]);
+  }
+}
+
+// Handle "Use Current Location" button click.
+function handleUseCurrentLocationClick() {
+  if (navigator.geolocation) {
+    $(this).prop("disabled", true).text(i18next.t("form.fetchLocation"));
+    
+    navigator.geolocation.getCurrentPosition(function(position) {
+      const lat = position.coords.latitude;
+      const long = position.coords.longitude;
+      $("#latitude").val(lat);
+      $("#longitude").val(long);
+      $("#citySelect").val("custom");
+      $("#useCurrentLocationBtn").prop("disabled", false).text(i18next.t("form.useCurrentLocation"));
+    }, function(error) {
+      let errorMessage;
+      switch(error.code) {
+        case error.PERMISSION_DENIED:
+          errorMessage = i18next.t("error.permissionDenied");
+          break;
+        case error.POSITION_UNAVAILABLE:
+          errorMessage = i18next.t("error.positionUnavailable");
+          break;
+        case error.TIMEOUT:
+          errorMessage = i18next.t("error.timeout");
+          break;
+        case error.UNKNOWN_ERROR:
+        default:
+          errorMessage = i18next.t("error.unknown");
+          break;
+      }
+      alert(i18next.t("error.location") + ": " + errorMessage);
+      $("#useCurrentLocationBtn").prop("disabled", false).text(i18next.t("form.useCurrentLocation"));
+    });
+  } else {
+    alert(i18next.t("error.geolocationNotSupported"));
+  }
+}
+
+// Handle form submission.
+function handleFormSubmission(e) {
+  e.preventDefault();
+  const lat = parseFloat($("#latitude").val());
+  const long = parseFloat($("#longitude").val());
+  const weatherChecker = new WeatherChecker(lat, long);
+  weatherChecker.snowThreshold = 2;
+  
+  $("#short-term-forecast").html(i18next.t("forecast.loading") || "Loading short-term forecast...");
+  $("#long-term-forecast").html(i18next.t("forecast.loading") || "Loading long-term forecast...");
+  $("#shortTermCard").removeClass("bg-warning bg-danger text-white");
+  $("#longTermCard").removeClass("bg-warning bg-danger text-white");
+  
+  // Fetch and evaluate short-term forecast.
+  weatherChecker.fetchShortTermForecast(6)
+    .then(function(rawData) {
+      const conditions = weatherChecker.evaluateShortTermForecast(rawData);
+      // Use display unit from API if provided; otherwise default to "cm" for snow.
+      const snowUnit = (conditions.display && conditions.display.unit && conditions.display.unit.snow) ? conditions.display.unit.snow : "cm";
+      let message = "";
+      message += i18next.t("alerts.totalSnow", { total: formatNumber(conditions.totalSnow), unit: snowUnit }) + "<br>";
+      if (conditions.significantSnow) {
+        message += i18next.t("alerts.snowWarning", { threshold: weatherChecker.snowThreshold }) + "<br>";
+      }
+      if (conditions.hailDetected) {
+        message += i18next.t("alerts.hail") + "<br>";
+      }
+      if (conditions.weatherAlert) {
+        message += i18next.t("alerts.weatherAlert") + "<br>";
+      }
+      if (!message) {
+        message = i18next.t("alerts.noAlerts") + "<br>";
+      }
+      $("#short-term-forecast").html(message);
+      if (conditions.weatherAlert || conditions.totalSnow > 10) {
+        $("#shortTermCard").addClass("bg-danger text-white");
+      } else if (conditions.totalSnow > weatherChecker.snowThreshold) {
+        $("#shortTermCard").addClass("bg-warning");
+      }
+    })
+    .catch(function() {
+      $("#short-term-forecast").html("Error fetching short-term forecast.");
+    });
+  
+  // Fetch and evaluate long-term forecast.
+  weatherChecker.fetchLongTermForecast(15, 0)
+    .then(function(rawData) {
+      const conditions = weatherChecker.evaluateLongTermForecast(rawData);
+      let message = "";
+      if (conditions.significantSnow) {
+        message += i18next.t("alerts.snowWarning", { threshold: weatherChecker.snowThreshold }) + "<br>";
+      }
+      if (conditions.hailDetected) {
+        message += i18next.t("alerts.hail") + "<br>";
+      }
+      if (conditions.weatherAlert) {
+        message += i18next.t("alerts.weatherAlert") + "<br>";
+      }
+      if (!message) {
+        message = i18next.t("alerts.noAlerts") + "<br>";
+      }
+      $("#long-term-forecast").html(message);
+      if (conditions.weatherAlert || conditions.totalSnow > 10) {
+        $("#longTermCard").addClass("bg-danger text-white");
+      } else if (conditions.totalSnow > weatherChecker.snowThreshold) {
+        $("#longTermCard").addClass("bg-warning");
+      }
+      // Build an accordion with detailed long-term forecast information.
+      buildLongTermAccordion(conditions);
+    })
+    .catch(function() {
+      $("#long-term-forecast").html("Error fetching long-term forecast.");
+    });
 }
 
 // Helper: build an accordion with details for each long-term forecast period.
@@ -199,7 +322,8 @@ function buildLongTermAccordion(conditions) {
   document.getElementById('longTermAccordionContainer').appendChild(accordionContainer);
 }
 
-$(document).ready(function() {
+// Function to initialize the application
+function initializeApp() {
   // Initialize i18next with XHR backend and language detector.
   i18next
     .use(i18nextXHRBackend)
@@ -230,128 +354,15 @@ $(document).ready(function() {
   });
   
   // Update coordinate fields when the city dropdown selection changes.
-  $("#citySelect").change(function() {
-    const value = $(this).val();
-    if (value === "custom") {
-      $("#latitude").val("");
-      $("#longitude").val("");
-    } else {
-      const coords = value.split(",");
-      $("#latitude").val(coords[0]);
-      $("#longitude").val(coords[1]);
-    }
-  });
+  $("#citySelect").change(handleCitySelectionChange);
   
   // Handle "Use Current Location" button click.
-  $("#useCurrentLocationBtn").click(function() {
-    if (navigator.geolocation) {
-      $(this).prop("disabled", true).text(i18next.t("form.fetchLocation"));
-      
-      navigator.geolocation.getCurrentPosition(function(position) {
-        const lat = position.coords.latitude;
-        const long = position.coords.longitude;
-        $("#latitude").val(lat);
-        $("#longitude").val(long);
-        $("#citySelect").val("custom");
-        $("#useCurrentLocationBtn").prop("disabled", false).text(i18next.t("form.useCurrentLocation"));
-      }, function(error) {
-        let errorMessage;
-        switch(error.code) {
-          case error.PERMISSION_DENIED:
-            errorMessage = i18next.t("error.permissionDenied");
-            break;
-          case error.POSITION_UNAVAILABLE:
-            errorMessage = i18next.t("error.positionUnavailable");
-            break;
-          case error.TIMEOUT:
-            errorMessage = i18next.t("error.timeout");
-            break;
-          case error.UNKNOWN_ERROR:
-          default:
-            errorMessage = i18next.t("error.unknown");
-            break;
-        }
-        alert(i18next.t("error.location") + ": " + errorMessage);
-        $("#useCurrentLocationBtn").prop("disabled", false).text(i18next.t("form.useCurrentLocation"));
-      });
-    } else {
-      alert(i18next.t("error.geolocationNotSupported"));
-    }
-  });
+  $("#useCurrentLocationBtn").click(handleUseCurrentLocationClick);
   
   // Handle form submission.
-  $("#weatherForm").submit(function(e) {
-    e.preventDefault();
-    const lat = parseFloat($("#latitude").val());
-    const long = parseFloat($("#longitude").val());
-    const weatherChecker = new WeatherChecker(lat, long);
-    weatherChecker.snowThreshold = 2;
-    
-    $("#short-term-forecast").html(i18next.t("forecast.loading") || "Loading short-term forecast...");
-    $("#long-term-forecast").html(i18next.t("forecast.loading") || "Loading long-term forecast...");
-    $("#shortTermCard").removeClass("bg-warning bg-danger text-white");
-    $("#longTermCard").removeClass("bg-warning bg-danger text-white");
-    
-    // Fetch and evaluate short-term forecast.
-    weatherChecker.fetchShortTermForecast(6)
-      .then(function(rawData) {
-        const conditions = weatherChecker.evaluateShortTermForecast(rawData);
-        // Use display unit from API if provided; otherwise default to "cm" for snow.
-        const snowUnit = (conditions.display && conditions.display.unit && conditions.display.unit.snow) ? conditions.display.unit.snow : "cm";
-        let message = "";
-        message += i18next.t("alerts.totalSnow", { total: formatNumber(conditions.totalSnow), unit: snowUnit }) + "<br>";
-        if (conditions.significantSnow) {
-          message += i18next.t("alerts.snowWarning", { threshold: weatherChecker.snowThreshold }) + "<br>";
-        }
-        if (conditions.hailDetected) {
-          message += i18next.t("alerts.hail") + "<br>";
-        }
-        if (conditions.weatherAlert) {
-          message += i18next.t("alerts.weatherAlert") + "<br>";
-        }
-        if (!message) {
-          message = i18next.t("alerts.noAlerts") + "<br>";
-        }
-        $("#short-term-forecast").html(message);
-        if (conditions.weatherAlert || conditions.totalSnow > 10) {
-          $("#shortTermCard").addClass("bg-danger text-white");
-        } else if (conditions.totalSnow > weatherChecker.snowThreshold) {
-          $("#shortTermCard").addClass("bg-warning");
-        }
-      })
-      .catch(function() {
-        $("#short-term-forecast").html("Error fetching short-term forecast.");
-      });
-    
-    // Fetch and evaluate long-term forecast.
-    weatherChecker.fetchLongTermForecast(15, 0)
-      .then(function(rawData) {
-        const conditions = weatherChecker.evaluateLongTermForecast(rawData);
-        let message = "";
-        if (conditions.significantSnow) {
-          message += i18next.t("alerts.snowWarning", { threshold: weatherChecker.snowThreshold }) + "<br>";
-        }
-        if (conditions.hailDetected) {
-          message += i18next.t("alerts.hail") + "<br>";
-        }
-        if (conditions.weatherAlert) {
-          message += i18next.t("alerts.weatherAlert") + "<br>";
-        }
-        if (!message) {
-          message = i18next.t("alerts.noAlerts") + "<br>";
-        }
-        $("#long-term-forecast").html(message);
-        if (conditions.weatherAlert || conditions.totalSnow > 10) {
-          $("#longTermCard").addClass("bg-danger text-white");
-        } else if (conditions.totalSnow > weatherChecker.snowThreshold) {
-          $("#longTermCard").addClass("bg-warning");
-        }
-        // Build an accordion with detailed long-term forecast information.
-        buildLongTermAccordion(conditions);
-      })
-      .catch(function() {
-        $("#long-term-forecast").html("Error fetching long-term forecast.");
-      });
-  });
-});
+  $("#weatherForm").submit(handleFormSubmission);
+}
+
+// Initialize the application when the document is ready
+$(document).ready(initializeApp);
 
