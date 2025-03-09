@@ -266,6 +266,38 @@ function summarizeLongTermPeriod(period, units) {
   return summary;
 }
 
+function buildSubperiodCard(title, subperiod, displayUnits) {
+  const card = document.createElement('div');
+  card.className = 'card';
+  card.style.width = '18rem';
+
+  const cardBody = document.createElement('div');
+  cardBody.className = 'card-body';
+  cardBody.style.backgroundImage = 'linear-gradient(rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.5)), url(https://icons.twnmm.com/wx_icons/v2/${subperiod.weatherCode.bgImage}")'; 
+
+  const cardTitle = document.createElement('h5');
+  cardTitle.className = 'card-title';
+  cardTitle.textContent = title;
+
+  const cardText = document.createElement('p');
+  cardText.className = 'card-text';
+
+  //TODO: Refactor this to use objects instead of strings
+  //TODO: Add more details to the card
+  console.log(subperiod);
+  cardText.innerHTML = `<img src="icons/${subperiod.weatherCode.icon}.png" alt="${subperiod.weatherCode.text}" style="width:40px;height:40px;">
+                      <p>${i18next.t("accordion.temperature")}: ${formatNumber(subperiod.temperature.value)}°C</p>
+                      <p>${i18next.t("accordion.feelsLike")}: ${formatNumber(subperiod.feelsLike)}°C</p>
+                      <p>${i18next.t("accordion.snow")}: ${formatNumber(subperiod.snow.value)} ${displayUnits.snow || "cm"}</p>
+                      <p>${i18next.t("accordion.rain")}: ${formatNumber(subperiod.rain.value)} ${displayUnits.rain || "mm"}</p>`;
+
+  cardBody.appendChild(cardTitle);
+  cardBody.appendChild(cardText);
+  card.appendChild(cardBody);
+
+  return card;
+}
+
 // Helper: build an accordion with details for each long-term forecast period.
 function buildLongTermAccordion(conditions) {
   const periods = conditions.periods || [];
@@ -318,20 +350,40 @@ function buildLongTermAccordion(conditions) {
       const accordionBody = document.createElement('div');
       accordionBody.className = 'accordion-body';
 
-      const details = [
-        { label: i18next.t("accordion.precipitationPercentage"), value: `${formatNumber(period.pop)}%` },
-        { label: i18next.t("accordion.snow"), value: `${formatNumber(period.snow.value)} ${displayUnits.snow}` },
-        { label: i18next.t("accordion.rain"), value: `${formatNumber(period.rain.value)} ${displayUnits.rain}` },
-        { label: i18next.t("accordion.min"), value: `${formatNumber(period.minTemperature)}°${displayUnits.temperature}` },
-        { label: i18next.t("accordion.max"), value: `${formatNumber(period.maxTemperature)}°${displayUnits.temperature}` }
-      ];
+      const row = document.createElement('div');
+      row.className = 'row';
 
-      details.forEach(detail => {
-        const p = document.createElement('p');
-        p.textContent = `${detail.label}: ${detail.value}`;
-        accordionBody.appendChild(p);
-      });
+      const dayColumn = document.createElement('div');
+      dayColumn.className = 'col-md-6';
 
+      const dayCard = buildSubperiodCard(i18next.t("accordion.day"), period.day, displayUnits);
+      dayColumn.appendChild(dayCard);
+
+      const nightColumn = document.createElement('div');
+      nightColumn.className = 'col-md-6';
+
+      const nightCard = buildSubperiodCard(i18next.t("accordion.night"), period.night, displayUnits);
+      nightColumn.appendChild(nightCard);
+
+      // const details = [
+      //   { label: i18next.t("accordion.precipitationPercentage"), value: `${formatNumber(period.pop)}%` },
+      //   { label: i18next.t("accordion.snow"), value: `${formatNumber(period.snow.value)} ${displayUnits.snow}` },
+      //   { label: i18next.t("accordion.rain"), value: `${formatNumber(period.rain.value)} ${displayUnits.rain}` },
+      //   { label: i18next.t("accordion.min"), value: `${formatNumber(period.minTemperature)}°${displayUnits.temperature}` },
+      //   { label: i18next.t("accordion.max"), value: `${formatNumber(period.maxTemperature)}°${displayUnits.temperature}` }
+      // ];
+
+      // details.forEach(detail => {
+      //   const p = document.createElement('p');
+      //   p.textContent = `${detail.label}: ${detail.value}`;
+      //   accordionBody.appendChild(p);
+
+        
+      // });
+
+      row.appendChild(dayColumn);
+      row.appendChild(nightColumn);
+      accordionBody.appendChild(row);
       accordionCollapse.appendChild(accordionBody);
       accordionItem.appendChild(accordionCollapse);
       accordionContainer.appendChild(accordionItem);
