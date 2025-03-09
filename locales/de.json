@@ -28,11 +28,16 @@
     },
     "accordion": {
       "period": "Zeitraum",
-      "snow": "Schnee",
-      "rain": "Regen",
+      "precipitationPercentage": "Niederschlagswahrscheinlichkeit (%)",
+      "precipitationType": "Niederschlagstyp",
+      "precipitationQuantity": "Niederschlagsmenge",
       "temperature": "Temperatur",
       "feelsLike": "Gefühlt",
-      "noDetails": "Keine detaillierte Vorhersage verfügbar."
+      "noDetails": "Keine detaillierte Vorhersage verfügbar.",
+      "snow": "Schnee",
+      "rain": "Regen",
+      "min": "Mindest",
+      "max": "Höchst"
     },
     "footer": {
       "detectedLanguage": "Erkannte Sprache:",

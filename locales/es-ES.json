@@ -33,7 +33,11 @@
     "precipitationQuantity": "Cantidad de precipitación",
     "temperature": "Temperatura",
     "feelsLike": "Sensación térmica",
-    "noDetails": "No hay detalles disponibles."
+    "noDetails": "No hay detalles disponibles.",
+    "snow": "Nieve",
+    "rain": "Lluvia",
+    "min": "Mín",
+    "max": "Máx"
   },
   "footer": {
     "detectedLanguage": "Idioma detectado:",
