@@ -268,7 +268,6 @@ function summarizeLongTermPeriod(period, units) {
 
 // Helper: build an accordion with details for each long-term forecast period.
 function buildLongTermAccordion(conditions) {
-  console.log(conditions);
   const periods = conditions.periods || [];
   const displayUnits = (conditions.display && conditions.display.unit) ? conditions.display.unit : { rain: "mm", snow: "cm" };
   const accordionContainer = document.createElement('div');
@@ -277,8 +276,6 @@ function buildLongTermAccordion(conditions) {
 
   if (periods.length > 0) {
     periods.forEach((period, index) => {
-      console.log(period);
-
       const collapseId = "collapsePeriod" + index;
       const headingId = "headingPeriod" + index;
       const accordionItem = document.createElement('div');
