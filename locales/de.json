@@ -37,7 +37,11 @@
       "snow": "Schnee",
       "rain": "Regen",
       "min": "Mindest",
-      "max": "Höchst"
+      "max": "Höchst",
+      "day": "Tag",
+      "night": "Nacht",
+      "wind": "Wind",
+      "humidity": "Luftfeuchtigkeit"
     },
     "footer": {
       "detectedLanguage": "Erkannte Sprache:",

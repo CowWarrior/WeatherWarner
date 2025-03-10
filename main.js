@@ -273,7 +273,15 @@ function buildSubperiodCard(title, subperiod, displayUnits) {
 
   const cardBody = document.createElement('div');
   cardBody.className = 'card-body';
-  cardBody.style.backgroundImage = 'linear-gradient(rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.5)), url(https://icons.twnmm.com/wx_icons/v2/${subperiod.weatherCode.bgImage}")'; 
+  
+  //cardBody.style.backgroundImage = 'linear-gradient(rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.5)), url(https://icons.twnmm.com/wx_icons/v2/${subperiod.weatherCode.bgImage}")'; 
+  
+  //cardBody.style.backgroundImage = `url("https://icons.twnmm.com/wx_icons/v2/${subperiod.weatherCode.bgImage}.svg")`; 
+  
+  //cardBody.style.backgroundColor = 'linear-gradient(rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.5))';
+  //cardBody.style.backgroundSize = 'cover';
+  //cardBody.style.backgroundPosition = 'top-right';
+  //cardBody.style.backgroundRepeat = 'no-repeat';
 
   const cardTitle = document.createElement('h5');
   cardTitle.className = 'card-title';
@@ -283,13 +291,15 @@ function buildSubperiodCard(title, subperiod, displayUnits) {
   cardText.className = 'card-text';
 
   //TODO: Refactor this to use objects instead of strings
-  //TODO: Add more details to the card
   console.log(subperiod);
-  cardText.innerHTML = `<img src="icons/${subperiod.weatherCode.icon}.png" alt="${subperiod.weatherCode.text}" style="width:40px;height:40px;">
-                      <p>${i18next.t("accordion.temperature")}: ${formatNumber(subperiod.temperature.value)}°C</p>
-                      <p>${i18next.t("accordion.feelsLike")}: ${formatNumber(subperiod.feelsLike)}°C</p>
-                      <p>${i18next.t("accordion.snow")}: ${formatNumber(subperiod.snow.value)} ${displayUnits.snow || "cm"}</p>
-                      <p>${i18next.t("accordion.rain")}: ${formatNumber(subperiod.rain.value)} ${displayUnits.rain || "mm"}</p>`;
+  cardText.innerHTML = `<img src="https://icons.twnmm.com/wx_icons/v2/${subperiod.weatherCode.icon}.svg" alt="${subperiod.weatherCode.text}" style="width:40px;height:40px;">
+                      </br>${i18next.t("accordion.temperature")}: ${formatNumber(subperiod.temperature.value)}°${displayUnits.temperature}
+                      </br>${i18next.t("accordion.feelsLike")}: ${formatNumber(subperiod.feelsLike)}°${displayUnits.temperature}
+                      </br>${i18next.t("accordion.snow")}: ${formatNumber(subperiod.snow.value)} ${displayUnits.snow || "cm"}
+                      </br>${i18next.t("accordion.rain")}: ${formatNumber(subperiod.rain.value)} ${displayUnits.rain || "mm"}
+                      </br>${i18next.t("accordion.wind")}: ${formatNumber(subperiod.wind.direction)} ${formatNumber(subperiod.wind.speed)} ${displayUnits.wind || "km/h"}
+                      </br>${i18next.t("accordion.humidity")}: ${formatNumber(subperiod.relativeHumidity)} ${displayUnits.humidity || "%"}
+                      `;
 
   cardBody.appendChild(cardTitle);
   cardBody.appendChild(cardText);
@@ -324,9 +334,7 @@ function buildLongTermAccordion(conditions) {
       accordionButton.dataset.bsTarget = `#${collapseId}`;
       accordionButton.ariaExpanded = index === 0 ? "true" : "false";
       accordionButton.ariaControls = collapseId;
-      //accordionButton.textContent = `${i18next.t("accordion.period")} ${index + 1}`;
-      //let periodName = new Date(period.time.local).toLocaleDateString(currentLocale, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
-      //let periodName = new Date(period.time.local).toLocaleDateString(currentLocale, { weekday: 'long', month: 'long', day: 'numeric' });
+
       let periodDate = new Date(period.time.local);
       let periodName;
       if (periodDate >= new Date(periodDate.getFullYear(), 11, 24) || periodDate <= new Date(periodDate.getFullYear(), 0, 7)) {
@@ -364,22 +372,6 @@ function buildLongTermAccordion(conditions) {
 
       const nightCard = buildSubperiodCard(i18next.t("accordion.night"), period.night, displayUnits);
       nightColumn.appendChild(nightCard);
-
-      // const details = [
-      //   { label: i18next.t("accordion.precipitationPercentage"), value: `${formatNumber(period.pop)}%` },
-      //   { label: i18next.t("accordion.snow"), value: `${formatNumber(period.snow.value)} ${displayUnits.snow}` },
-      //   { label: i18next.t("accordion.rain"), value: `${formatNumber(period.rain.value)} ${displayUnits.rain}` },
-      //   { label: i18next.t("accordion.min"), value: `${formatNumber(period.minTemperature)}°${displayUnits.temperature}` },
-      //   { label: i18next.t("accordion.max"), value: `${formatNumber(period.maxTemperature)}°${displayUnits.temperature}` }
-      // ];
-
-      // details.forEach(detail => {
-      //   const p = document.createElement('p');
-      //   p.textContent = `${detail.label}: ${detail.value}`;
-      //   accordionBody.appendChild(p);
-
-        
-      // });
 
       row.appendChild(dayColumn);
       row.appendChild(nightColumn);

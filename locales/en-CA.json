@@ -37,7 +37,11 @@
     "snow": "Snow",
     "rain": "Rain",
     "min": "Min",
-    "max": "Max"
+    "max": "Max",
+    "day": "Day",
+    "night": "Night",
+    "wind": "Wind",
+    "humidity": "Humidity"
   },
   "footer": {
     "detectedLanguage": "Detected Language:",
